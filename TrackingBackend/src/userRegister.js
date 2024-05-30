@@ -1,5 +1,5 @@
 const poolQuery = require("../misc/poolQuery.js");
-import { genSaltSync, hash } from "bcrypt";
+const { genSaltSync, hash } = require("bcrypt");
 const jwtCreator = require("./jwtCreator.js");
 const express = require("express");
 const userRegisterRouter = express.Router();

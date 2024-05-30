@@ -24,6 +24,7 @@ app.use("/adminChangePassword", adminChangePasswordRouter);
 app.use("/email", emailRouter);
 app.use("/getImage", getImageUploadUrlRouter);
 app.use("/deleteImage", deleteImageRouter);
+
 app.listen(3000, () => {
   console.log("Server is listening at port 3000");
 });
