@@ -8,11 +8,7 @@ const saltRound = 10;
 adminChangePasswordRouter.post("/", async (req, res) => {
   try {
     const { user_name, oldPassword, newPassword } = req.body.input;
-    const token = await adminChangePasswordHandler(
-      user_name,
-      oldPassword,
-      newPassword
-    );
+    await adminChangePasswordHandler(user_name, oldPassword, newPassword);
     res.json({ error: 0, message: "Admin Change Password Successful!" });
   } catch (error) {
     res.json({ error: 1, message: error.message });
@@ -33,7 +29,7 @@ const adminChangePasswordHandler = async (
     }
     const rightPassword = result.rows[0].password;
     const passwordStatus = await bcrypt.compare(oldPassword, rightPassword);
-    if (passwordStatus == false) {
+    if (!passwordStatus) {
       throw new Error("Wrong Old Password!");
     }
     const hashedNewPassword = await bcrypt.hash(newPassword, saltRound);

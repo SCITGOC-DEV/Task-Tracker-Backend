@@ -11,13 +11,17 @@ userRegisterRouter.post("/", async (req, res) => {
 
     const hashedPassword = await hash(password, genSaltSync(10));
     const result = await poolQuery(
-      `INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
+      `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username`,
       [username, email, hashedPassword]
     );
     const userName = result.rows[0].username;
-
     const userId = result.rows[0].id;
-    return jwtCreator(userId, userName, "user");
+    const token = await jwtCreator(userId, userName, "user");
+    res.json({
+      error: 0,
+      message: "User Register Successful",
+      accessToken: token,
+    });
   } catch (error) {
     throw new Error(e.message);
   }
