@@ -11,7 +11,7 @@ adminLoginRouter.post("/", async (req, res) => {
     const token = await adminLogInHandler(admin_name, password);
     res.json({
       error: 0,
-      message: "Admin Login Successful",
+      message: "Admin Login Successfully",
       accessToken: token,
     });
   } catch (e) {

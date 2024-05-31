@@ -23,7 +23,7 @@ userRegisterRouter.post("/", async (req, res) => {
       accessToken: token,
     });
   } catch (error) {
-    throw new Error(e.message);
+    throw new Error(error.message);
   }
 });
 
@@ -36,7 +36,7 @@ const checkUserExist = async (email) => {
       throw new Error("User already exist with email: " + email);
     }
   } catch (error) {
-    throw new Error(e.message);
+    throw new Error(error.message);
   }
 };
 
