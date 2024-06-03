@@ -17,6 +17,7 @@ userRegisterRouter.post("/", async (req, res) => {
     const userName = result.rows[0].username;
     const userId = result.rows[0].id;
     const token = await jwtCreator(userId, userName, "user");
+
     res.json({
       error: 0,
       message: "User Register Successful",
@@ -33,13 +34,10 @@ const checkUserExist = async (email) => {
       email,
     ]);
     if (result.rowCount !== 0) {
-      res.json({
-        error: 1,
-        message: `User already exist with email: ${email}`,
-      });
+      throw new Error(`User already exist with email: ${email}`);
     }
   } catch (error) {
-    res.json({ error: 1, message: error.message });
+    throw new Error(error.message);
   }
 };
 
