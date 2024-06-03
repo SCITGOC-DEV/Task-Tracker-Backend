@@ -33,10 +33,13 @@ const checkUserExist = async (email) => {
       email,
     ]);
     if (result.rowCount !== 0) {
-      throw new Error("User already exist with email: " + email);
+      res.json({
+        error: 1,
+        message: `User already exist with email: ${email}`,
+      });
     }
   } catch (error) {
-    throw new Error(error.message);
+    res.json({ error: 1, message: error.message });
   }
 };
 
