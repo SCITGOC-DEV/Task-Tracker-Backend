@@ -8,9 +8,8 @@ const jwttokenkey =
 
 const jwtExpTime = "7d";
 
-const digitalOceanAccessKeyId = "6ZF5GJGTLMZZZNAST3UG";
-const digitalOceanSecretAccessKey =
-  "QYf7TF39wapUFAds/hRwL5gWQHuedvLyaowECtLEDoE";
+const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 module.exports = {
   databaseHost,
@@ -19,6 +18,6 @@ module.exports = {
   databaseUsername,
   jwttokenkey,
   jwtExpTime,
-  digitalOceanAccessKeyId,
-  digitalOceanSecretAccessKey,
+  awsAccessKeyId,
+  awsSecretAccessKey,
 };

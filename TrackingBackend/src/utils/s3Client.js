@@ -1,12 +1,11 @@
 const { S3 } = require("@aws-sdk/client-s3");
-const { digitalOceanAccessKeyId, digitalOceanSecretAccessKey } = require("../../config.js")
+const { awsAccessKeyId, awsSecretAccessKey } = require("../../config.js")
 
 const s3Client = new S3({
-    endpoint: "https://sgp1.digitaloceanspaces.com",
-    region: "us-east-1",
+    region: "ap-southeast-1",
     credentials: {
-        accessKeyId: digitalOceanAccessKeyId,
-        secretAccessKey: digitalOceanSecretAccessKey
+        accessKeyId: awsAccessKeyId,
+        secretAccessKey: awsSecretAccessKey
     }
 });
 

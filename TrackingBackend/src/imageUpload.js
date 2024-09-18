@@ -43,8 +43,8 @@ const ImageUploadInfoGenerator = async (contentType) => {
       imageName = imageName + ".pdf";
     }
     const bucketParams = {
-      Bucket: "axra",
-      Key: `Task/${imageName}`,
+      Bucket: "scit-task-tracker",
+      Key: `task/${imageName}`,
       ContentType: contentType,
       ACL: "public-read",
     };
