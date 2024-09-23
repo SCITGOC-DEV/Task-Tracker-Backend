@@ -1,4 +1,4 @@
-const poolQuery = require("../misc/poolQuery.js");
+const poolQuery = require("../../misc/poolQuery.js");
 const express = require("express");
 
 const changeProjectStatusRouter = express.Router();
