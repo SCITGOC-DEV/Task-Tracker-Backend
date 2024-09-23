@@ -8,6 +8,7 @@ const getImageUploadUrlRouter = require("./src/imageUpload");
 const deleteImageRouter = require("./src/deleteImage");
 const userRegisterRouter = require("./src/userRegister");
 const changeProjectStatus = require("./src/projects/change_project_status");
+const changeAssignedProject = require("./src/projects/change_assigned_project");
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -26,6 +27,7 @@ app.use("/email", emailRouter);
 app.use("/getImage", getImageUploadUrlRouter);
 app.use("/deleteImage", deleteImageRouter);
 app.use("/project/changeProjectStatus", changeProjectStatus);
+app.use("/project/change_assigned_project", changeAssignedProject);
 
 app.listen(3000, () => {
   console.log("Server is listening at port 3000");
