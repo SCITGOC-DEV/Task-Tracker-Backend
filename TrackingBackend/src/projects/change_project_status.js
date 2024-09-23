@@ -43,4 +43,4 @@ async function changeProjectStatus(status, acual_start_date, acual_end_date, pro
     }
 }
 
-module.exports = adminChangePasswordRouter;
+module.exports = changeProjectStatusRouter;
