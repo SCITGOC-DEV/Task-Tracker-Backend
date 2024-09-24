@@ -3,7 +3,7 @@ const express = require("express");
 
 const assignedInventoryToProjectRouter = express.Router();
 
-assignedInventoryToProjectRouter.post('/project/assignedInventoryToProject', async (req, res) => {
+assignedInventoryToProjectRouter.post('/', async (req, res) => {
     const { project_id, inventory_id, total_qty } = req.body.input;  // extract inputs
   
     try { 

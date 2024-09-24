@@ -3,7 +3,7 @@ const express = require("express");
 
 const assignedInventoryToTaskRouter = express.Router();
 
-assignedInventoryToTaskRouter.post('/project/assignedInventoryToTask', async (req, res) => {
+assignedInventoryToTaskRouter.post('/', async (req, res) => {
     const { project_id,inventory_id,task_id,total_qty,rent_date,return_date,qty,remark,request_user_name,request_date } = req.body.input;  // extract inputs
   
     try { 

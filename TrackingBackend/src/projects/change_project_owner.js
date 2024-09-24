@@ -1,9 +1,9 @@
 const poolQuery = require("../../misc/poolQuery.js");
 const express = require("express");
 
-const changeAssignedProjectStatusRouter = express.Router();
+const changeProjectOwnerRouter = express.Router();
 
-changeAssignedProjectStatusRouter.post('/project/changeAssignedProjectStatus', async (req, res) => {
+changeProjectOwnerRouter.post('/', async (req, res) => {
     const { project_id, old_name, new_name } = req.body.input;  // extract inputs
   
     try {
@@ -43,4 +43,4 @@ async function changeProjectStatus(old_name,new_name, project_id) {
     }
 }
 
-module.exports = changeAssignedProjectStatusRouter;
+module.exports = changeProjectOwnerRouter;

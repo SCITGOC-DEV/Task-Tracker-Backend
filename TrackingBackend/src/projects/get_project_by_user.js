@@ -3,7 +3,7 @@ const express = require("express");
 
 const getProjectsByUserRouter = express.Router();
 
-getProjectsByUserRouter.post('/project/getProjectsByUserRouter', async (req, res) => {
+getProjectsByUserRouter.post('/', async (req, res) => {
     const { assigned_admin_name } = req.body.input;  // extract inputs
   
     try {

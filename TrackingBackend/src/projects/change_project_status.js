@@ -3,7 +3,7 @@ const express = require("express");
 
 const changeProjectStatusRouter = express.Router();
 
-changeProjectStatusRouter.post('/project/changeProjectStatus', async (req, res) => {
+changeProjectStatusRouter.post('/', async (req, res) => {
     const { project_id, status, acual_start_date, acual_end_date } = req.body.input;  // extract inputs
   
     try {
