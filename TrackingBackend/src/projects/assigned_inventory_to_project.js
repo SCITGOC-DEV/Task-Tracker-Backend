@@ -23,17 +23,25 @@ assignedInventoryToProjectRouter.post('/', async (req, res) => {
 
 async function assignedInventoryToProject(project_id, inventory_id, total_qty) {
     try {
-        const result = await poolQuery(
+        const project = await poolQuery(
+          `select * from projects where id = '${project_id}'`
+        );
+
+        if (project.rowCount === 0) {
+          throw new Error("No project found!");
+        }
+      
+        const inventories = await poolQuery(
             `select * from inventories where id = '${inventory_id}'`
           );
 
-        if (result.rowCount === 0) {
+        if (inventories.rowCount === 0) {
           throw new Error("No inventory found!");
         }
         
-        var qty = result[0].quantity;
-        var units_in_stock = result[0].units_in_stock;
-        var units_on_request = result[0].units_on_request;
+        var qty = inventories.rows[0].quantity;
+        var units_in_stock = inventories.rows[0].units_in_stock;
+        var units_on_request = inventories.rows[0].units_on_request;
         var total_request = units_on_request + total_qty;
         if(total_request > qty){
           throw new Error("Inventory's quantity is not enough!");
