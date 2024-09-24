@@ -31,8 +31,8 @@ async function assignedInventoryToTask(project_id,inventory_id,task_id,total_qty
           throw new Error("No inventory found!");
         }
         
-        var total_qty = result[0].total_qty;
-        var used_qty = result[0].used_qty;
+        var total_qty = result.rows[0].total_qty;
+        var used_qty = result.rows[0].used_qty;
         var total_request = used_qty + qty;
         if(total_request > total_qty){
           throw new Error("Inventory's quantity is not enough!");

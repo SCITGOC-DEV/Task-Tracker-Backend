@@ -27,14 +27,14 @@ changeProjectStatusRouter.post('/', async (req, res) => {
 async function changeProjectStatus(status, acual_start_date, acual_end_date, project_id) {
     try {
         const result = await poolQuery(
-            `select * from projectHistories where id = '${project_id}'`
+            `select * from project_histories where id = '${project_id}'`
           );
           if (result.rowCount === 0) {
             throw new Error("Assigned project doesn't exist in system!");
           }          
 
         await poolQuery(`
-            UPDATE projectHistories
+            UPDATE project_histories
             SET status = $1, actual_start_date = $2, actual_end_date = $3
             WHERE project_id = $4
           `, [status, acual_start_date, acual_end_date, project_id]);

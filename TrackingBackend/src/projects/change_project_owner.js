@@ -27,14 +27,14 @@ changeProjectOwnerRouter.post('/', async (req, res) => {
 async function changeProjectStatus(old_name,new_name, project_id) {
     try {
         const result = await poolQuery(
-            `select * from projectHistories where id = '${project_id}' and assigned_admin_name = '${old_name}'`
+            `select * from project_histories where id = '${project_id}' and assigned_admin_name = '${old_name}'`
           );
           if (result.rowCount === 0) {
             throw new Error("Assigned project doesn't exist in system!");
           }          
 
         await poolQuery(`
-            UPDATE projectHistories
+            UPDATE project_histories
             SET  assigned_admin_name = $1
             WHERE project_id = $2 and assigned_admin_name = $3
           `, [new_name,project_id,old_name]);
