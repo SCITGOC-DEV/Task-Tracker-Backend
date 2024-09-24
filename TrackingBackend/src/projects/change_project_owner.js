@@ -1,20 +1,20 @@
 const poolQuery = require("../../misc/poolQuery.js");
 const express = require("express");
 
-const changeProjectStatusRouter = express.Router();
+const changeAssignedProjectStatusRouter = express.Router();
 
-changeProjectStatusRouter.post('/project/ChangeAssignedProjectStatus', async (req, res) => {
-    const { project_id, status, acual_start_date, acual_end_date } = req.body.input;  // extract inputs
+changeAssignedProjectStatusRouter.post('/project/changeAssignedProjectStatus', async (req, res) => {
+    const { project_id, old_name, new_name } = req.body.input;  // extract inputs
   
     try {
       // Logic to update project status in your DB (SQL query or ORM call)
       
       // Example: Update project status in your PostgreSQL database
-      await changeProjectStatus(status, acual_start_date, acual_end_date, project_id);
+      await changeProjectStatus(old_name, new_name, project_id);
   
       res.json({
         success: true,
-        message: "Assigned project status updated successfully"
+        message: "Project status updated successfully"
       });
     } catch (error) {
       res.json({
@@ -24,10 +24,10 @@ changeProjectStatusRouter.post('/project/ChangeAssignedProjectStatus', async (re
     }
   });
 
-async function changeProjectStatus(status, acual_start_date, acual_end_date, project_id) {
+async function changeProjectStatus(old_name,new_name, project_id) {
     try {
         const result = await poolQuery(
-            `select * from projectHistories where id = '${project_id}'`
+            `select * from projectHistories where id = '${project_id}' and assigned_admin_name = '${old_name}'`
           );
           if (result.rowCount === 0) {
             throw new Error("Assigned project doesn't exist in system!");
@@ -35,12 +35,12 @@ async function changeProjectStatus(status, acual_start_date, acual_end_date, pro
 
         await poolQuery(`
             UPDATE projectHistories
-            SET status = $1, actual_start_date = $2, actual_end_date = $3
-            WHERE project_id = $4
-          `, [status, acual_start_date, acual_end_date, project_id]);
+            SET  assigned_admin_name = $1
+            WHERE project_id = $2 and assigned_admin_name = $3
+          `, [new_name,project_id,old_name]);
     } catch (error) {
         throw new Error(error.message);
     }
 }
 
-module.exports = changeProjectStatusRouter;
+module.exports = changeAssignedProjectStatusRouter;
