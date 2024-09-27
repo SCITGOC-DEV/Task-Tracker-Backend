@@ -57,7 +57,8 @@ async function getProjectDetails() {
         serial_number_start: row.serial_number_start,
         serial_number_end: row.serial_number_end,
         project_name: row.project_name,
-        task_name: row.task_name
+        task_name: row.task_name,
+        model_type: row.model_type
       }));
       
       // Log the projects for debugging
