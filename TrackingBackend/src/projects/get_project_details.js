@@ -51,7 +51,15 @@ async function getProjectDetails() {
       }
 
       // Return the resulting project data
-      return projectsResult.rows;
+      // Map the resulting rows to include only the necessary fields
+      return projectsResult.rows.map(row => ({
+        scit_control_number: row.scit_control_number,
+        serial_number: row.serial_number,
+        serial_number_start: row.serial_number_start,
+        serial_number_end: row.serial_number_end,
+        project_name: row.project_name,
+        task_name: row.task_name
+      }));
     } catch (error) {
         throw new Error(error.message);
     }
