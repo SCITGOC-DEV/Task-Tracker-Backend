@@ -34,7 +34,7 @@ async function changeProjectStatus(old_name,new_name, project_id) {
           }          
 
         await poolQuery(`
-            UPDATE project_histories
+            UPDATE assigned_projects
             SET  assigned_admin_name = $1
             WHERE project_id = $2 and assigned_admin_name = $3
           `, [new_name,project_id,old_name]);

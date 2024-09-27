@@ -27,7 +27,7 @@ async function getProjectsByUser(assigned_admin_name) {
     try {
         // Get all project IDs from project_histories for the specified admin
         const projectHistoriesResult = await poolQuery(
-          `SELECT project_id FROM project_histories WHERE assigned_admin_name = $1`, 
+          `SELECT project_id FROM assigned_projects WHERE assigned_admin_name = $1`, 
           [assigned_admin_name]  // Use parameterized queries to prevent SQL injection
       );
 

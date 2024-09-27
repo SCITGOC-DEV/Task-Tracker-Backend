@@ -34,7 +34,7 @@ async function changeProjectStatus(status, acual_start_date, acual_end_date, pro
           }          
 
         await poolQuery(`
-            UPDATE project_histories
+            UPDATE assigned_projects
             SET status = $1, actual_start_date = $2, actual_end_date = $3
             WHERE project_id = $4
           `, [status, acual_start_date, acual_end_date, project_id]);
