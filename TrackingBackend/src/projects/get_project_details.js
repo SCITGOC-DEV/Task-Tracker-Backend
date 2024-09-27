@@ -50,9 +50,8 @@ async function getProjectDetails() {
           throw new Error("No result found!");
       }
 
-      // Return the resulting project data
       // Map the resulting rows to include only the necessary fields
-      return projectsResult.rows.map(row => ({
+      const projects = projectsResult.rows.map(row => ({
         scit_control_number: row.scit_control_number,
         serial_number: row.serial_number,
         serial_number_start: row.serial_number_start,
@@ -60,6 +59,11 @@ async function getProjectDetails() {
         project_name: row.project_name,
         task_name: row.task_name
       }));
+      
+      // Log the projects for debugging
+      console.log("Mapped projects:", projects);
+      
+      return projects;
     } catch (error) {
         throw new Error(error.message);
     }
