@@ -1,4 +1,8 @@
 const express = require("express");
+
+const authFromToken = require("./src/utils/authFromToken");
+const verifyAdminRoles = require("./src/utils/verifyAdminRoles");
+
 const adminLoginRouter = require("./src/adminLogin");
 const userLoginRouter = require("./src/userLogin");
 const userChangePasswordRouter = require("./src/changePasswordUser");
@@ -15,6 +19,7 @@ const assignedInventoryToProjectRouter = require("./src/projects/assigned_invent
 const assignedInventoryToTaskRouter = require("./src/tasks/assigned_inventory_to_task");
 const getProjectDetailsRouter = require("./src/projects/get_project_details");
 const createTransactionRouter = require("./src/triggers/trigger_create_transactions");
+const createInventoryRouter = require("./src/inventories/create_inventory");
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -40,6 +45,8 @@ app.use("/project/assignedInventoryToProject", assignedInventoryToProjectRouter)
 app.use("/task/assignedInventoryToTask", assignedInventoryToTaskRouter);
 app.use("/project/getProjectDetails", getProjectDetailsRouter);
 app.use("/trigger/createTransaction", createTransactionRouter);
+
+app.use("/inventory/createInventory", authFromToken, createInventoryRouter);
 
 app.listen(3000, () => {
   console.log("Server is listening at port 3000");

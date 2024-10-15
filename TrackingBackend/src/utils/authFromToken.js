@@ -16,7 +16,8 @@ const authFromToken = (req,res,next) => {
         req.roleFromToken = decoded.hasura["x-hasura-default-role"];
         next();
     } catch (error) {
-        res.status(500).json({error});
+        console.log(err);
+        res.json({success: false, message: err });
     }
 }
 
