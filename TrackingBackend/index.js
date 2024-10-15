@@ -1,7 +1,7 @@
 const express = require("express");
 
-const authFromToken = require("./src/utils/authFromToken");
-const verifyAdminRoles = require("./src/utils/verifyAdminRoles");
+const authFromToken = require("./misc/authFromToken");
+const verifyAdminRoles = require("./misc/verifyAdminRoles");
 
 const adminLoginRouter = require("./src/adminLogin");
 const userLoginRouter = require("./src/userLogin");
