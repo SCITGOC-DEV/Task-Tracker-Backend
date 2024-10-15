@@ -8,7 +8,7 @@ const authFromToken = (req, res, next) => {
         token = req.headers.authorization.split(' ')[1];
     }
     if (!token) {
-        res.json({ success: false, message: "A token is required for authorization" });
+        return res.json({ success: false, message: "A token is required for authorization" });
     }
     try {
         const decoded = jwt.verify(token, jwttokenkey);
@@ -16,8 +16,8 @@ const authFromToken = (req, res, next) => {
         req.roleFromToken = decoded.hasura["x-hasura-default-role"];
         next();
     } catch (error) {
-        console.log(err);
-        res.json({ success: false, message: err });
+        console.log(error);
+        return res.json({ success: false, message: error });
     }
 }
 
