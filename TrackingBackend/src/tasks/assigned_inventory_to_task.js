@@ -24,7 +24,7 @@ assignedInventoryToTaskRouter.post('/', async (req, res) => {
 async function assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, rent_date, return_date, qty, remark, request_user_name, request_date) {
   try {
     const result = await poolQuery(
-      `select * from project_inventories where project_id = '${project_id} and inventory_id = '${inventory_id}'`
+      `select * from project_inventories where project_id = '${project_id}' and inventory_id = '${inventory_id}'`
     );
 
     if (result.rowCount === 0) {
