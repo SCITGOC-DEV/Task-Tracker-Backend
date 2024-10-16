@@ -47,11 +47,11 @@ async function assignedInventoryToTask(project_id, inventory_id, task_id, total_
     }
 
     await poolQuery(`
-            insert into task_inventories(project_id,inventory_id,task_id,total_qty,rent_date,return_date,qty,status,remark,request_user_name,request_date, is_return)
-            values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+            INSERT INTO task_inventories(project_id,inventory_id,task_id,total_qty,rent_date,return_date,qty,status,remark,request_user_name,request_date, is_return)
+            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
           `, [project_id, inventory_id, task_id, total_qty, rent_date, return_date, qty, status, remark, request_user_name, request_date, is_return]);
 
-    await poolQuery(`update project_inventories set used_qty = ${total_request} where project_id = ${project_id} and inventory_id = ${inventory_id}`);
+    await poolQuery(`UPDATE project_inventories SET used_qty = ${total_request} WHERE project_id = ${project_id} AND inventory_id = ${inventory_id}`);
 
   } catch (error) {
     throw new Error(error.message);

@@ -63,6 +63,7 @@ const TransactionStatusEnum = Object.freeze({
     UPDATE: 'UPDATE',
     DELETE: 'DELETE',
     ASSIGNED: "ASSIGNED",
+    ADD: "ADD",
     REMOVE : "REMOVE",
     CHANGE:'CHANGE'
 });
