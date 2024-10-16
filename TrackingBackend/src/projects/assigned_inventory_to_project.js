@@ -1,14 +1,23 @@
 const poolQuery = require("../../misc/poolQuery.js");
 const express = require("express");
+const { assignedInventoryToProject } = require("./projects.js")
 
 const assignedInventoryToProjectRouter = express.Router();
-const { ProjectStatusEnum, AssignedProjectStatusEnum, TaskStatusEnum, AssignedTaskStatusEnum, ProjectInventoryStatusEnum, TaskInventoryStatusEnum } = require("../../src/utils/enums.js")
+const logTransaction = require("../transactions/logTransaction")
+
+const { ProjectStatusEnum, AssignedProjectStatusEnum,
+  TaskStatusEnum, AssignedTaskStatusEnum,
+  ProjectInventoryStatusEnum, TaskInventoryStatusEnum,
+  TransactionTypeEnum, TransactionStatusEnum } = require("../../src/utils/enums")
 
 assignedInventoryToProjectRouter.post('/', async (req, res) => {
   const { project_id, inventory_id, total_qty } = req.body.input;  // extract inputs
-
+  let created_by = req.idFromToken;
+  
   try {
-    await assignedInventoryToProject(project_id, inventory_id, total_qty);
+    const result = await assignedInventoryToProject(project_id, inventory_id, total_qty, created_by);
+
+    logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.ADD, `Add inventory : ${result.scit_control_number}  to Project: ${result.project_name}`, created_by);
 
     res.json({
       success: true,
@@ -21,49 +30,5 @@ assignedInventoryToProjectRouter.post('/', async (req, res) => {
     });
   }
 });
-
-async function assignedInventoryToProject(project_id, inventory_id, total_qty) {
-  try {
-    const project = await poolQuery(
-      `select * from projects where id = '${project_id}'`
-    );
-
-    if (project.rowCount === 0) {
-      throw new Error("No project found!");
-    }
-
-    const inventories = await poolQuery(
-      `select * from inventories where id = '${inventory_id}'`
-    );
-
-    if (inventories.rowCount === 0) {
-      throw new Error("No inventory found!");
-    }
-
-    var qty = inventories.rows[0].quantity;
-    var units_on_request = inventories.rows[0].units_on_request;
-    var total_request = units_on_request + total_qty;
-    var is_return = inventories.rows[0].is_return;
-    let status;
-    if (!is_return)
-      status = ProjectInventoryStatusEnum.NO_RETURN
-    else
-      status = ProjectInventoryStatusEnum.NULL
-
-    if (total_request > qty) {
-      throw new Error("Inventory's quantity is not enough!");
-    }
-
-    var pj_inv_res = await poolQuery(`
-            insert into project_inventories(project_id, inventory_id, total_qty,used_qty, status, is_return)
-            values($1,$2,$3,$4,$5)
-          `, [project_id, inventory_id, total_qty, 0, status, is_return]);
-
-    await poolQuery(`update inventories set units_on_request = ${total_request} where id = ${inventory_id}`);
-
-  } catch (error) {
-    throw new Error(error.message);
-  }
-}
 
 module.exports = assignedInventoryToProjectRouter;
