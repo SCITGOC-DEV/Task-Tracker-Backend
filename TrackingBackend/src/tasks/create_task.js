@@ -1,5 +1,6 @@
 const express = require("express");
 const poolQuery = require("../../misc/poolQuery");
+const { isExistTask } = require("./tasks");
 
 const createTaskRouter = express.Router();
 
@@ -30,6 +31,11 @@ createTaskRouter.post("/", async (req, res) => {
     }
 
     try {
+
+        if(isExistTask(task_name)){
+            res.json({ success: false, message: "Task name is already created." });
+        }
+
         const result = await createTask({
             fk_location_name,
             task_name,
