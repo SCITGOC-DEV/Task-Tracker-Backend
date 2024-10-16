@@ -40,7 +40,6 @@ createInventoryRouter.post("/", async (req, res) => {
         } = req.body.input;
 
         let created_by = req.idFromToken;
-        console.log(created_by);
 
         // Required fields check
         const requiredFields = [unit_price, quantity, serial_number_start, is_return, inventory_category_id];
@@ -58,10 +57,8 @@ createInventoryRouter.post("/", async (req, res) => {
             serial_number_end, is_return, type, inventory_category_id, part_number, created_by
         });
 
-
         const scitControlNumber = await getNextScitControlNumber(result.id); // Fetch next scit_control_number
-        console.log(TransactionTypeEnum)
-        console.log(TransactionStatusEnum)
+       
         logTransaction(TransactionTypeEnum.INVENTORY, TransactionStatusEnum.CREATE, `Create inventory - SCIT Control Number: ${scitControlNumber}`, created_by);
 
         res.json({ success: true, message: "Inventory created successfully", inventoryId: result.id, scit_control_number: scitControlNumber, created_at: result.created_at });
@@ -105,8 +102,6 @@ const createInventory = async (inventoryData) => {
         serial_number_end, is_return, type, inventory_category_id, part_number, scitControlNumber, created_by
     } = inventoryData;
 
-    console.log(created_by);
-
     // SQL query to insert the inventory data
     const query = `
     INSERT INTO inventories(supplier, country, address, contact_number, email_address, website, unit_price, quantity, total_amount,
@@ -125,7 +120,6 @@ const createInventory = async (inventoryData) => {
     ];
 
     const result = await poolQuery(query, values);
-    console.log(result.rows[0]);
 
     return result.rows[0];  // Return the inserted inventory details
 };
