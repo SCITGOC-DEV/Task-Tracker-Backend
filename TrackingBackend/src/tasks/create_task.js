@@ -1,6 +1,12 @@
 const express = require("express");
 const poolQuery = require("../../misc/poolQuery");
 const { isExistTask, isExistTaskById, getTaskById } = require("./tasks");
+const logTransaction = require("../transactions/logTransaction")
+
+const { ProjectStatusEnum, AssignedProjectStatusEnum,
+    TaskStatusEnum, AssignedTaskStatusEnum,
+    ProjectInventoryStatusEnum, TaskInventoryStatusEnum,
+    TransactionTypeEnum, TransactionStatusEnum } = require("../../src/utils/enums")
 
 const createTaskRouter = express.Router();
 
@@ -32,8 +38,8 @@ createTaskRouter.post("/", async (req, res) => {
 
     try {
 
-        if (isExistTask(task_name)) {
-            res.json({ success: false, message: "Task name is already created." });
+        if (await isExistTask(task_name)) {
+            res.json({ success: false, message: `Task: ${task_name} is already created.` });
             return;
         }
 
@@ -55,6 +61,8 @@ createTaskRouter.post("/", async (req, res) => {
             fk_project_id,
             created_by
         });
+
+        logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.CREATE, `Create task - Task Name: ${task_name}`, created_by);
         res.json({ success: true, message: "Task created successfully", id: result.id, created_at: result.created_at });
     } catch (error) {
         res.json({ success: false, message: error.message });

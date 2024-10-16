@@ -28,8 +28,7 @@ createProjectRouter.post("/", async (req, res) => {
     }
 
     try {
-
-        if (isExistProject(project_name)) {
+        if (await isExistProject(project_name)) {
             res.json({ success: false, message: "Project name is already created." });
             return;
         }

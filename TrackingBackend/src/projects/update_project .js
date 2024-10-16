@@ -33,12 +33,14 @@ updateProjectRouter.post("/", async (req, res) => {
 
         if (isExistProjectById(project_name)) {
             res.json({ success: false, message: "Project name is already created." });
+            return;
         }
 
         let project = await getProjectById(id);
 
-        if(project == null){
+        if (project == null) {
             res.json({ success: false, message: "Project doesn't exist." });
+            return;
         }
 
         const result = await updateProject({
@@ -46,7 +48,9 @@ updateProjectRouter.post("/", async (req, res) => {
         });
 
         if (project.status != status)
-            logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.CHANGE, `Update project -  Status : ${project.status} to status.`, created_by);
+            logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.CHANGE, `Update project -  Status : ${project.status} to ${status}.`, created_by);
+        else
+            logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.UPDATE, `Update project.`, created_by);
 
         res.json({ success: true, message: "Project updated successfully", id: result.id, updated_at: result.updated_at });
     } catch (error) {

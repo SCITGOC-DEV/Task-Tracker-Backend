@@ -16,8 +16,8 @@ assignedInventoryToProjectRouter.post('/', async (req, res) => {
   
   try {
     const result = await assignedInventoryToProject(project_id, inventory_id, total_qty, created_by);
-
-    logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.ADD, `Add inventory : ${result.scit_control_number}  to Project: ${result.project_name}`, created_by);
+    
+    logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.ADD, `Inventory : ${result.scit_control_number}  to Project: ${result.project_name}`, created_by);
 
     res.json({
       success: true,

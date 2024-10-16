@@ -1,4 +1,10 @@
 const poolQuery = require("../../misc/poolQuery.js");
+const logTransaction = require("../transactions/logTransaction")
+
+const { ProjectStatusEnum, AssignedProjectStatusEnum,
+  TaskStatusEnum, AssignedTaskStatusEnum,
+  ProjectInventoryStatusEnum, TaskInventoryStatusEnum,
+  TransactionTypeEnum, TransactionStatusEnum } = require("../../src/utils/enums")
 const express = require("express");
 
 const assignedInventoryToTaskRouter = express.Router();
@@ -10,6 +16,21 @@ assignedInventoryToTaskRouter.post('/', async (req, res) => {
   try {
     await assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, rent_date, return_date, qty, remark, request_user_name, request_date);
 
+    const inventory = await poolQuery(
+      `select * from inventories where id = '${inventory_id}'`
+    );
+
+    if (inventory.rowCount === 0) {
+      throw new Error("No inventory found!");
+    }
+    const task = await poolQuery(
+      `select * from tasks where id = '${task_id}'`
+    );
+    if (inventory.rowCount === 0) {
+      throw new Error("No inventory found!");
+    }
+    logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.ASSIGNED, `Inventory: ${inventory.scit_control_number} assigned to Task: ${task.task_name}.`, created_by);
+    
     res.json({
       success: true,
       message: "Assigen inventory to task successfully"
