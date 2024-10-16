@@ -33,6 +33,16 @@ updateTaskRouter.post("/", async (req, res) => {
     }
 
     try {
+
+        var taskList = await getTaskByProjectId(fk_project_id)
+
+        const taskExists = taskList.some(task => task.task_name === task_name && task.id != id); // Check if task_name exists in the taskList
+
+        if (taskExists) {
+            res.json({ success: false, message: `Task: ${task_name} is already created.` });
+            return;
+        }
+
         const result = await updateTask(
             id,
             fk_location_name,

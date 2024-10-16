@@ -99,7 +99,7 @@ const getProjectById = async (id) => {
     const query = `SELECT * FROM projects WHERE id = $1`; // Use parameterized query
 
     const result = await poolQuery(query, [id, project_name]);
-    return result.rowCount > 0 ? result.rows[0] : null; // Return true if the project exists, false otherwise
+    return result.rowCount > 0 ? result.rows[0] : []; // Return true if the project exists, false otherwise
 };
 
 async function assignedInventoryToProject(project_id, inventory_id, total_qty, created_by) {

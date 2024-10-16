@@ -30,7 +30,6 @@ updateProjectRouter.post("/", async (req, res) => {
     }
 
     try {
-
         if (isExistProjectById(project_name)) {
             res.json({ success: false, message: "Project name is already created." });
             return;

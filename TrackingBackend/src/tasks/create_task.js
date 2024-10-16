@@ -1,6 +1,6 @@
 const express = require("express");
 const poolQuery = require("../../misc/poolQuery");
-const { isExistTask, isExistTaskById, getTaskById } = require("./tasks");
+const { isExistTask, isExistTaskById, getTaskById, getTaskByProjectId } = require("./tasks");
 const logTransaction = require("../transactions/logTransaction")
 
 const { ProjectStatusEnum, AssignedProjectStatusEnum,
@@ -37,8 +37,11 @@ createTaskRouter.post("/", async (req, res) => {
     }
 
     try {
+        var taskList = await getTaskByProjectId(fk_project_id)
 
-        if (await isExistTask(task_name)) {
+        const taskExists = taskList.some(task => task.task_name === task_name); // Check if task_name exists in the taskList
+
+        if (taskExists) {
             res.json({ success: false, message: `Task: ${task_name} is already created.` });
             return;
         }
