@@ -34,6 +34,7 @@ createTaskRouter.post("/", async (req, res) => {
 
         if (isExistTask(task_name)) {
             res.json({ success: false, message: "Task name is already created." });
+            return;
         }
 
         const result = await createTask({
