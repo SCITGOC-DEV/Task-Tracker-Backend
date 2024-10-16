@@ -80,7 +80,7 @@ const addAssignedProject = async (assignedProjectData) => {
 
 const isExistProject = async (project_name) => {
     // SQL query to select only the project_name column
-    const query = `SELECT projects FROM projects WHERE project_name = $1`; // Use parameterized query
+    const query = `SELECT project_name FROM projects WHERE project_name = $1`; // Use parameterized query
 
     const result = await poolQuery(query, [project_name]);
     return result.rows.length > 0; // Return true if the project exists, false otherwise

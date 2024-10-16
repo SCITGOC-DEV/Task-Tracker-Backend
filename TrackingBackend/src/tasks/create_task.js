@@ -45,6 +45,7 @@ createTaskRouter.post("/", async (req, res) => {
             permit_photo_url,
             percentage,
             status,
+            fk_project_id,
             created_by
         });
         res.json({ success: true, message: "Task created successfully", id: result.id, created_at: result.created_at });
@@ -69,6 +70,7 @@ const createTask = async (taskData) => {
         permit_photo_url,
         percentage,
         status,
+        fk_project_id,
         created_by
     } = taskData;
 
@@ -89,9 +91,10 @@ const createTask = async (taskData) => {
             permit_photo_url,
             percentage,
             status,
+            fk_project_id,
             created_by
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
         RETURNING id, created_at;
     `;
 
@@ -110,6 +113,7 @@ const createTask = async (taskData) => {
         permit_photo_url,
         percentage,
         status,
+        fk_project_id,
         created_by
     ];
 

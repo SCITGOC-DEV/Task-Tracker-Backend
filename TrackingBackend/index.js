@@ -57,22 +57,22 @@ app.use("/email", emailRouter);
 app.use("/getImage", getImageUploadUrlRouter);
 app.use("/deleteImage", deleteImageRouter);
 
-app.use("/project/addAssignedProject", addAssignedProjectRouter);
-app.use("/project/assignedInventoryToProject", assignedInventoryToProjectRouter);
-app.use("/project/changeAssignedProjectStatus", changeAssignedProjectStatusRouter);
-app.use("/project/changeProjectOwner", changeProjectOwnerRouter);
-app.use("/project/changeProjectStatus", changeProjectStatusRouter);
-app.use("/project/createProject", createProjectRouter);
-app.use("/project/getProjectByUser", getProjectByUserRouter);
-app.use("/project/getProjectDetails", getProjectDetailsRouter);
-app.use("/project/updateAssignedProject", updateAssignedProjectRouter);
-app.use("/project/updateProject", updateProjectRouter);
+app.use("/project/addAssignedProject", authFromToken, addAssignedProjectRouter);
+app.use("/project/assignedInventoryToProject", authFromToken, assignedInventoryToProjectRouter);
+app.use("/project/changeAssignedProjectStatus", authFromToken, changeAssignedProjectStatusRouter);
+app.use("/project/changeProjectOwner", authFromToken, changeProjectOwnerRouter);
+app.use("/project/changeProjectStatus", authFromToken, changeProjectStatusRouter);
+app.use("/project/createProject", authFromToken, createProjectRouter);
+app.use("/project/getProjectByUser", authFromToken, getProjectByUserRouter);
+app.use("/project/getProjectDetails", authFromToken, getProjectDetailsRouter);
+app.use("/project/updateAssignedProject", authFromToken, updateAssignedProjectRouter);
+app.use("/project/updateProject", authFromToken, updateProjectRouter);
 
-app.use("/task/assignedInventoryToTask", assignedInventoryToTaskRouter);
-app.use("/task/createAssignedTask", createAssignedTaskRouter);
-app.use("/task/createTask", createTaskRouter);
-app.use("/task/updateAssignedTask", updateAssignedTaskRouter);
-app.use("/task/updateTask", updateTaskRouter);
+app.use("/task/assignedInventoryToTask", authFromToken, assignedInventoryToTaskRouter);
+app.use("/task/createAssignedTask", authFromToken, createAssignedTaskRouter);
+app.use("/task/createTask", authFromToken, createTaskRouter);
+app.use("/task/updateAssignedTask", authFromToken, updateAssignedTaskRouter);
+app.use("/task/updateTask", authFromToken, updateTaskRouter);
 
 app.use("/trigger/createTransaction", createTransactionRouter);
 
