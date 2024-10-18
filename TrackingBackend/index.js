@@ -24,7 +24,9 @@ const updateAssignedProjectRouter = require("./src/projects/update_assigned_proj
 const updateProjectRouter = require("./src/projects/update_project ");
 
 const assignedInventoryToTaskRouter = require("./src/tasks/assigned_inventory_to_task");
+const changeUserForAssignedTaskRouter = require("./src/tasks/change_user_for_assigned_task");
 const createAssignedTaskRouter = require("./src/tasks/create_assigned_task");
+const removeAssignedTaskRouter = require("./src/tasks/remove_assigned_task");
 const createTaskRouter = require("./src/tasks/create_task");
 const updateAssignedTaskRouter = require("./src/tasks/update_assigned_task");
 const updateTaskRouter = require("./src/tasks/update_task");
@@ -69,8 +71,10 @@ app.use("/project/updateAssignedProject", authFromToken, updateAssignedProjectRo
 app.use("/project/updateProject", authFromToken, updateProjectRouter);
 
 app.use("/task/assignedInventoryToTask", authFromToken, assignedInventoryToTaskRouter);
+app.use("/task/changeUserForAssignedTask", authFromToken, changeUserForAssignedTaskRouter);
 app.use("/task/createAssignedTask", authFromToken, createAssignedTaskRouter);
 app.use("/task/createTask", authFromToken, createTaskRouter);
+app.use("/task/removeAssignedTask", authFromToken, removeAssignedTaskRouter);
 app.use("/task/updateAssignedTask", authFromToken, updateAssignedTaskRouter);
 app.use("/task/updateTask", authFromToken, updateTaskRouter);
 

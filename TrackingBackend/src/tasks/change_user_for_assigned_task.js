@@ -5,9 +5,10 @@ const { createAssignedTask, removeAssignedTask, getTaskById, getAssignedTaskById
 const logTransaction = require("../transactions/logTransaction");
 const { TransactionTypeEnum, TransactionStatusEnum } = require("../utils/enums");
 
-const updateAssignedTaskRouter = express.Router();
+const changeUserForAssignedTaskRouter
+ = express.Router();
 
-updateAssignedTaskRouter.post("/", async (req, res) => {
+changeUserForAssignedTaskRouter.post("/", async (req, res) => {
     const {
         assigned_task_Id,
         new_fk_assigned_to,
@@ -76,4 +77,4 @@ updateAssignedTaskRouter.post("/", async (req, res) => {
         }
     });
 
-module.exports = updateAssignedTaskRouter;
+module.exports = changeUserForAssignedTaskRouter;

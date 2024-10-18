@@ -5,9 +5,9 @@ const { removeAssignedTask, getTaskById, getAssignedTaskById } = require("./task
 const logTransaction = require("../transactions/logTransaction");
 const { TransactionTypeEnum, TransactionStatusEnum } = require("../utils/enums");
 
-const updateAssignedTaskRouter = express.Router();
+const removeAssignedTaskRouter = express.Router();
 
-updateAssignedTaskRouter.post("/", async (req, res) => {
+removeAssignedTaskRouter.post("/", async (req, res) => {
     const {
         assigned_task_Id,
         task_id,
@@ -55,4 +55,4 @@ updateAssignedTaskRouter.post("/", async (req, res) => {
     }
 });
 
-module.exports = updateAssignedTaskRouter;
+module.exports = removeAssignedTaskRouter;
