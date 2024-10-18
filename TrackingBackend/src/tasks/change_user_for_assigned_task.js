@@ -6,7 +6,7 @@ const logTransaction = require("../transactions/logTransaction");
 const { TransactionTypeEnum, TransactionStatusEnum } = require("../utils/enums");
 
 const changeUserForAssignedTaskRouter
- = express.Router();
+    = express.Router();
 
 changeUserForAssignedTaskRouter.post("/", async (req, res) => {
     const {
@@ -47,34 +47,33 @@ changeUserForAssignedTaskRouter.post("/", async (req, res) => {
         let percentage = assignedTask.percentage;
         let status = assignedTask.status;
 
-        try {
-            const result = await createAssignedTask({
-                fk_assigned_to,
-                task_id,
-                note,
-                start_date_time,
-                end_date_time,
-                percentage,
-                status,
-                created_by,
-                remark
+        const newTask = await createAssignedTask({
+            fk_assigned_to,
+            task_id,
+            note,
+            start_date_time,
+            end_date_time,
+            percentage,
+            status,
+            created_by,
+            remark
+        });
+
+        logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.REMOVE, `Change assigned task from ${assignedTask.fk_assigned_to} to ${new_fk_assigned_to} `, created_by);
+
+        if (result) {
+            res.json({
+                success: true,
+                id: result.id,
+                updated_at: result.updated_at,
+                message: "Task change successfully",
             });
-
-            logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.REMOVE, `Change assigned task from ${assignedTask.fk_assigned_to} to ${new_fk_assigned_to} `, created_by);
-
-            if (result) {
-                res.json({
-                    success: true,
-                    id: result.id,
-                    updated_at: result.updated_at,
-                    message: "Task change successfully",
-                });
-            } else {
-                res.json({ success: false, message: "Task change failed" });
-            }
-        } catch (e) {
-            res.json({ success: false, message: e.message });
+        } else {
+            res.json({ success: false, message: "Task change failed" });
         }
-    });
+    } catch (e) {
+        res.json({ success: false, message: e.message });
+    }
+});
 
 module.exports = changeUserForAssignedTaskRouter;
