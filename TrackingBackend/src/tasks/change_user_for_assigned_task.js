@@ -31,8 +31,13 @@ changeUserForAssignedTaskRouter.post("/", async (req, res) => {
 
         if (assignedTask.task_id != task_id) {
             return res.json({ success: false, message: "Remove assigned task doesn't match" });
+        }        
+
+        if(assignedTask.active == false){
+            return res.json({ success: false, message: "Task is already changed" });
         }
-        if (assignedTask.fk_assigned_to != fk_assigned_to) {
+
+        if (assignedTask.fk_assigned_to != new_fk_assigned_to) {
             return res.json({ success: false, message: "User is already assigned" });
         }
 

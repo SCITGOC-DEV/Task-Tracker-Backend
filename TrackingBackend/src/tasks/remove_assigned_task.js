@@ -31,7 +31,7 @@ removeAssignedTaskRouter.post("/", async (req, res) => {
         }
 
         if(assignedTask.active == false){
-            return res.json({ success: false, message: "Task is already remove" });
+            return res.json({ success: false, message: "Task is already removed" });
         }
 
         let task = await getTaskById(task_id);
