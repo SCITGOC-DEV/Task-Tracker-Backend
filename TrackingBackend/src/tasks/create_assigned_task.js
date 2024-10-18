@@ -1,5 +1,6 @@
 const express = require("express");
 const poolQuery = require("../../misc/poolQuery");
+const { createAssignedTask } = require("./tasks");
 
 const createAssignedTaskRouter = express.Router();
 
@@ -37,48 +38,5 @@ createAssignedTaskRouter.post("/", async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 });
-
-const createAssignedTask = async (taskData) => {
-    const {
-        fk_assigned_to,
-        task_id,
-        note,
-        start_date_time,
-        end_date_time,
-        percentage,
-        status,
-        created_by
-    } = taskData;
-
-    // SQL query to insert a new assigned task
-    const query = `
-        INSERT INTO assigned_tasks (
-            fk_assigned_to,
-            task_id,
-            note,
-            start_date_time,
-            end_date_time,
-            percentage,
-            status,
-            created_at,
-            created_by
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), $8)
-        RETURNING id, created_at;
-    `;
-
-    const values = [
-        fk_assigned_to,
-        task_id,
-        note,
-        start_date_time,
-        end_date_time,
-        percentage,
-        status
-    ];
-
-    const result = await poolQuery(query, values);
-    return result.rows[0]; // Return the newly created record's ID and created_at timestamp
-};
 
 module.exports = createAssignedTaskRouter;

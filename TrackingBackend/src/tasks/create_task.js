@@ -1,6 +1,6 @@
 const express = require("express");
 const poolQuery = require("../../misc/poolQuery");
-const { isExistTask, isExistTaskById, getTaskById, getTaskByProjectId } = require("./tasks");
+const { createTask, getTaskByProjectId } = require("./tasks");
 const logTransaction = require("../transactions/logTransaction")
 
 const { ProjectStatusEnum, AssignedProjectStatusEnum,
@@ -39,7 +39,7 @@ createTaskRouter.post("/", async (req, res) => {
     try {
         var taskList = await getTaskByProjectId(fk_project_id)
 
-        const taskExists = taskList.some(task => task.task_name === task_name); // Check if task_name exists in the taskList
+        const taskExists = taskList.find(task => task.task_name === task_name); // Check if task_name exists in the taskList
 
         if (taskExists) {
             res.json({ success: false, message: `Task: ${task_name} is already created.` });
@@ -71,72 +71,5 @@ createTaskRouter.post("/", async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 });
-
-const createTask = async (taskData) => {
-    const {
-        fk_location_name,
-        task_name,
-        hardware,
-        quantity,
-        dispatch,
-        note,
-        start_date_time,
-        end_date_time,
-        signature_photo_url,
-        start_coords,
-        end_coords,
-        permit_photo_url,
-        percentage,
-        status,
-        fk_project_id,
-        created_by
-    } = taskData;
-
-    // SQL query to insert a new task
-    const query = `
-        INSERT INTO tasks (
-            fk_location_name,
-            task_name,
-            hardware,
-            quantity,
-            dispatch,
-            note,
-            start_date_time,
-            end_date_time,
-            signature_photo_url,
-            start_coords,
-            end_coords,
-            permit_photo_url,
-            percentage,
-            status,
-            fk_project_id,
-            created_by
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-        RETURNING id, created_at;
-    `;
-
-    const values = [
-        fk_location_name,
-        task_name,
-        hardware,
-        quantity,
-        dispatch,
-        note,
-        start_date_time,
-        end_date_time,
-        signature_photo_url,
-        start_coords,
-        end_coords,
-        permit_photo_url,
-        percentage,
-        status,
-        fk_project_id,
-        created_by
-    ];
-
-    const result = await poolQuery(query, values);
-    return result.rows[0]; // Return the newly created record's ID and created_at timestamp
-};
 
 module.exports = createTaskRouter;

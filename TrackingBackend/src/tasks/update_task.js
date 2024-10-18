@@ -1,5 +1,6 @@
 const express = require("express");
 const poolQuery = require("../../misc/poolQuery");
+const { isExistTask, isExistTaskById, getTaskById, getTaskByProjectId } = require("./tasks");
 
 const updateTaskRouter = express.Router();
 
@@ -36,7 +37,7 @@ updateTaskRouter.post("/", async (req, res) => {
 
         var taskList = await getTaskByProjectId(fk_project_id)
 
-        const taskExists = taskList.some(task => task.task_name === task_name && task.id != id); // Check if task_name exists in the taskList
+        const taskExists = taskList.find(task => task.task_name === task_name && task.fk_project_id == fk_project_id && task.id != id); // Check if task_name exists in the taskList
 
         if (taskExists) {
             res.json({ success: false, message: `Task: ${task_name} is already created.` });
@@ -59,7 +60,6 @@ updateTaskRouter.post("/", async (req, res) => {
             permit_photo_url,
             percentage,
             status,
-            fk_project_id,
             actual_start_date_time,
             actual_end_date_time
         );
@@ -98,6 +98,8 @@ const updateTask = async (
     actual_start_date_time,
     actual_end_date_time
 ) => {
+
+
     const query = `
         UPDATE tasks
         SET 
