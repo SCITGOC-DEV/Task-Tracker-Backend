@@ -32,6 +32,9 @@ changeUserForAssignedTaskRouter.post("/", async (req, res) => {
         if (assignedTask.task_id != task_id) {
             return res.json({ success: false, message: "Remove assigned task doesn't match" });
         }
+        if (assignedTask.fk_assigned_to != fk_assigned_to) {
+            return res.json({ success: false, message: "User is already assigned" });
+        }
 
         let task = await getTaskById(task_id);
 
@@ -59,7 +62,7 @@ changeUserForAssignedTaskRouter.post("/", async (req, res) => {
             remark
         });
 
-        logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.REMOVE, `Change assigned task from ${assignedTask.fk_assigned_to} to ${new_fk_assigned_to} `, created_by);
+        logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.CHANGE, `Change assigned task from ${assignedTask.fk_assigned_to} to ${new_fk_assigned_to} `, created_by);
 
         if (result) {
             res.json({

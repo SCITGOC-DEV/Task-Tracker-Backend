@@ -21,7 +21,7 @@ const getTaskById = async (id) => {
     // SQL query to select only the task_name column
     const query = `SELECT * FROM tasks WHERE id = $1`; // Use parameterized query
 
-    const result = await poolQuery(query, [id, task_name]);
+    const result = await poolQuery(query, [id]);
     return result.rowCount > 0 ? result.rows[0] : []; // Return true if the task exists, false otherwise
 };
 
@@ -37,7 +37,7 @@ const getAssignedTaskById = async (id) => {
     // SQL query to select only the task_name column
     const query = `SELECT * FROM assigned_tasks WHERE id = $1`; // Use parameterized query
 
-    const result = await poolQuery(query, [id, task_name]);
+    const result = await poolQuery(query, [id]);
     return result.rowCount > 0 ? result.rows[0] : []; // Return true if the task exists, false otherwise
 };
 
@@ -153,22 +153,22 @@ const createAssignedTask = async (taskData) => {
 };
 
 const removeAssignedTask = async (
-    assigned_task_Id,
+    assigned_task_id,
     task_id,
     remark
 ) => {
     const query = `
         UPDATE assigned_tasks
         SET 
-            active = false
-            updated_at = NOW()
+            active = false,
+            updated_at = NOW(),
             remark = $1
         WHERE id = $2
         RETURNING id, updated_at;
     `;
 
     const values = [
-        remark, assigned_task_Id
+        remark, assigned_task_id
     ];
 
     const result = await poolQuery(query, values);

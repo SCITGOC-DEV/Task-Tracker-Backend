@@ -9,14 +9,14 @@ const removeAssignedTaskRouter = express.Router();
 
 removeAssignedTaskRouter.post("/", async (req, res) => {
     const {
-        assigned_task_Id,
+        assigned_task_id,
         task_id,
         remark
     } = req.body.input;
 
     let created_by = req.idFromToken;
 
-    const requiredFields = [assigned_task_Id, task_id];
+    const requiredFields = [assigned_task_id, task_id];
     for (let i of requiredFields) {
         if (typeof i === "undefined") {
             return res.json({ success: false, message: "Assigned id and task id are required fields" });
@@ -24,16 +24,20 @@ removeAssignedTaskRouter.post("/", async (req, res) => {
     }
 
     try {
-        let assignedTask = await getAssignedTaskById(assigned_task_Id);
+        let assignedTask = await getAssignedTaskById(assigned_task_id);
 
         if(assignedTask.task_id != task_id){
             return res.json({ success: false, message: "Remove assigned task doesn't match" });
         }
 
+        if(assignedTask.active == false){
+            return res.json({ success: false, message: "Task is already remove" });
+        }
+
         let task = await getTaskById(task_id);
 
         const result = await removeAssignedTask(
-            assigned_task_Id,
+            assigned_task_id,
             task_id,
             remark
         );
