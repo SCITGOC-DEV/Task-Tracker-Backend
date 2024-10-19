@@ -37,7 +37,7 @@ changeUserForAssignedTaskRouter.post("/", async (req, res) => {
             return res.json({ success: false, message: "Task is already changed" });
         }
 
-        if (assignedTask.fk_assigned_to != new_fk_assigned_to) {
+        if (assignedTask.fk_assigned_to == new_fk_assigned_to) {
             return res.json({ success: false, message: "User is already assigned" });
         }
 

@@ -135,8 +135,8 @@ async function assignedInventoryToProject(project_id, inventory_id, total_qty, c
         }
 
         var pj_inv_res = await poolQuery(`
-              insert into project_inventories(project_id, inventory_id, total_qty,used_qty, status, is_return, created_by)
-              values($1,$2,$3,$4,$5, $6)
+              insert into project_inventories(project_id, inventory_id, total_qty,used_qty , status, is_return, created_by)
+              values($1, $2, $3, $4, $5, $6, $7)
             `, [project_id, inventory_id, total_qty, 0, status, is_return, created_by]);
 
         await poolQuery(`update inventories set units_on_request = ${total_request} where id = ${inventory_id}`);
