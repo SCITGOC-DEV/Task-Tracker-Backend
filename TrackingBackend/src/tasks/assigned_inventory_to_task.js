@@ -10,11 +10,11 @@ const express = require("express");
 const assignedInventoryToTaskRouter = express.Router();
 
 assignedInventoryToTaskRouter.post('/', async (req, res) => {
-  const { project_id, inventory_id, task_id, total_qty, rent_date, return_date, qty, remark, request_user_name, request_date } = req.body.input;  // extract inputs
+  const { project_id, inventory_id, task_id, total_qty, rent_date, return_date, remark, request_user_name, request_date } = req.body.input;  // extract inputs
 
   try {
     let created_by = req.idFromToken;
-    await assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, rent_date, return_date, qty, remark, request_user_name, request_date);
+    await assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, rent_date, return_date, remark, request_user_name, request_date);
 
     const inventory = await poolQuery(
       `select * from inventories where id = '${inventory_id}'`
@@ -43,19 +43,19 @@ assignedInventoryToTaskRouter.post('/', async (req, res) => {
   }
 });
 
-async function assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, rent_date, return_date, qty, remark, request_user_name, request_date) {
+async function assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, rent_date, return_date, remark, request_user_name, request_date) {
   try {
     const result = await poolQuery(
       `select * from project_inventories where project_id = '${project_id}' and inventory_id = '${inventory_id}'`
     );
 
     if (result.rowCount === 0) {
-      throw new Error("No inventory found!");
+      throw new Error("No inventory found for this project.");
     }
 
-    var total_qty = result.rows[0].total_qty;
-    var used_qty = result.rows[0].used_qty;
-    var total_request = used_qty + qty;
+    var pj_total_qty = result.rows[0].total_qty;
+    var pj_used_qty = result.rows[0].used_qty;
+    var total_request = pj_used_qty + total_qty;
     var is_return = result.rows[0].is_return;
     let status;
     if (!is_return)
@@ -64,13 +64,24 @@ async function assignedInventoryToTask(project_id, inventory_id, task_id, total_
       status = ProjectInventoryStatusEnum.NULL
 
     if (total_request > total_qty) {
-      throw new Error("Inventory's quantity is not enough!");
+      throw new Error("Inventory's quantity is not enough for this project!");
     }
 
     await poolQuery(`
-            INSERT INTO task_inventories(project_id,inventory_id,task_id,total_qty,rent_date,return_date,qty,status,remark,request_user_name,request_date, is_return)
-            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-          `, [project_id, inventory_id, task_id, total_qty, rent_date, return_date, qty, status, remark, request_user_name, request_date, is_return]);
+            INSERT INTO task_inventories(
+            project_id,
+            inventory_id,
+            task_id,
+            total_qty,
+            rent_date,
+            return_date,
+            status,
+            remark,
+            request_user_name,
+            request_date, 
+            is_return)
+            VALUES($1, $2 ,$3 ,$4 ,$5 ,$6 ,$7 ,$8 ,$9 ,$10 , $11)
+          `, [project_id, inventory_id, task_id, total_qty, rent_date, return_date, status, remark, request_user_name, request_date, is_return]);
 
     await poolQuery(`UPDATE project_inventories SET used_qty = ${total_request} WHERE project_id = ${project_id} AND inventory_id = ${inventory_id}`);
 
