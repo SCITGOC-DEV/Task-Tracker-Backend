@@ -26,6 +26,10 @@ removeAssignedTaskRouter.post("/", async (req, res) => {
     try {
         let assignedTask = await getAssignedTaskById(assigned_task_id);
 
+        if (assignedTask == null) {
+            return res.json({ success: false, message: "There is no assigned task." });
+        }
+
         if(assignedTask.task_id != task_id){
             return res.json({ success: false, message: "Remove assigned task doesn't match" });
         }

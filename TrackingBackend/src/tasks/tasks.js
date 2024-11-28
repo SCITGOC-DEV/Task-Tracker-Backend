@@ -38,7 +38,7 @@ const getAssignedTaskById = async (id) => {
     const query = `SELECT * FROM assigned_tasks WHERE id = $1`; // Use parameterized query
 
     const result = await poolQuery(query, [id]);
-    return result.rowCount > 0 ? result.rows[0] : []; // Return true if the task exists, false otherwise
+    return result.rowCount > 0 ? result.rows[0] : null; // Return true if the task exists, false otherwise
 };
 
 const createTask = async (taskData) => {

@@ -77,6 +77,7 @@ app.use("/task/createTask", authFromToken, createTaskRouter);
 app.use("/task/removeAssignedTask", authFromToken, removeAssignedTaskRouter);
 app.use("/task/updateAssignedTask", authFromToken, updateAssignedTaskRouter);
 app.use("/task/updateTask", authFromToken, updateTaskRouter);
+app.use("/task/acceptAssignedTask", authFromToken, verifyAdminRoles(['user']), updateTaskRouter);
 
 app.use("/trigger/createTransaction", createTransactionRouter);
 

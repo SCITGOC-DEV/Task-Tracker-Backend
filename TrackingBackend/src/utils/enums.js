@@ -20,6 +20,7 @@ const AssignedProjectStatusEnum = Object.freeze({
 const TaskStatusEnum = Object.freeze({
     PENDING: 'Pending',
     ASSIGNED: 'Assigned',
+    ACCEPTED: 'Accepted',
     PROGRESSING: 'Progressing',
     REVIEW: 'Review',
     COMPLETED: 'Completed',
