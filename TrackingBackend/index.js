@@ -30,6 +30,7 @@ const removeAssignedTaskRouter = require("./src/tasks/remove_assigned_task");
 const createTaskRouter = require("./src/tasks/create_task");
 const updateAssignedTaskRouter = require("./src/tasks/update_assigned_task");
 const updateTaskRouter = require("./src/tasks/update_task");
+const acceptAssignedTaskRouter = require("./src/tasks/accept_assigned_task");
 
 const createTransactionRouter = require("./src/triggers/trigger_create_transactions");
 
@@ -77,7 +78,7 @@ app.use("/task/createTask", authFromToken, createTaskRouter);
 app.use("/task/removeAssignedTask", authFromToken, removeAssignedTaskRouter);
 app.use("/task/updateAssignedTask", authFromToken, updateAssignedTaskRouter);
 app.use("/task/updateTask", authFromToken, updateTaskRouter);
-app.use("/task/acceptAssignedTask", authFromToken, verifyAdminRoles(['user']), updateTaskRouter);
+app.use("/task/acceptAssignedTask", authFromToken, verifyAdminRoles(['user']), acceptAssignedTaskRouter);
 
 app.use("/trigger/createTransaction", createTransactionRouter);
 
