@@ -108,6 +108,29 @@ const createTask = async (taskData) => {
     return result.rows[0]; // Return the newly created record's ID and created_at timestamp
 };
 
+const updateTaskStatus = async (
+    task_id,
+    status
+) => {
+
+    const query = `
+    UPDATE tasks
+    SET 
+        status = $1,        
+        updated_at = NOW()
+    WHERE task_id = $2
+    RETURNING id, updated_at;
+`;
+
+    const values = [
+        status,
+        task_id
+    ];
+
+    const result = await poolQuery(query, values);
+    return result.rows[0]; // Return the updated task details
+};
+
 const createAssignedTask = async (taskData) => {
     const {
         fk_assigned_to,
@@ -182,5 +205,6 @@ module.exports = { isExistTask,
     getTaskByProjectId, 
     getAssignedTaskById, 
     createTask, 
+    updateTaskStatus,
     createAssignedTask,
     removeAssignedTask };

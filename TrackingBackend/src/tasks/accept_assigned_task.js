@@ -1,6 +1,7 @@
 const express = require("express");
 const poolQuery = require("../../misc/poolQuery");
-const { getAssignedTaskById } = require("./tasks");
+const { getAssignedTaskById, updateTaskStatus } = require("./tasks");
+const { TaskStatusEnum } = require("../utils/enums");
 
 const acceptAssignedTaskRouter = express.Router();
 
@@ -27,7 +28,7 @@ acceptAssignedTaskRouter.post("/", async (req, res) => {
             return res.json({ success: false, message: "There is no assigned task." });
         }
 
-        if(assignedTask.task_id != task_id){
+        if (assignedTask.task_id != task_id) {
             return res.json({ success: false, message: "Assigned task doesn't match" });
         }
 
@@ -37,6 +38,8 @@ acceptAssignedTaskRouter.post("/", async (req, res) => {
             is_accept_user,
             remark
         );
+
+        await updateTaskStatus(task_id, TaskStatusEnum.ACCEPTED);
 
         if (result) {
             res.json({
@@ -54,10 +57,10 @@ acceptAssignedTaskRouter.post("/", async (req, res) => {
 });
 
 const updateAssignedTask = async (
-        task_id,
-        assigned_task_id,
-        is_accept_user,
-        remark
+    task_id,
+    assigned_task_id,
+    is_accept_user,
+    remark
 ) => {
 
     const query = `
@@ -65,7 +68,7 @@ const updateAssignedTask = async (
         SET 
             is_accept_user = $1,
             remark = $2,
-            accepted_at = = NOW(),
+            accepted_at = NOW(),
             updated_at = NOW()
         WHERE task_id = $3 and assigned_task_id = $4
         RETURNING id, updated_at;
