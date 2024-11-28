@@ -1,0 +1,20 @@
+{
+  "name": "com.oro.auth",
+  "version": "1.0.0",
+  "description": "Login, signup, jwt generator and jwt refresher features for ORO System",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@onfido/api": "^2.1.0",
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.5",
+    "pg": "^8.7.1",
+    "moment": "^2.30.1"
+  }
+}

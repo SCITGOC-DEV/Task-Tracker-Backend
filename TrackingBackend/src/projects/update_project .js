@@ -23,6 +23,8 @@ updateProjectRouter.post("/", async (req, res) => {
         percentage
     } = req.body.input;
 
+    let created_by = req.idFromToken;
+
     // Required fields check
     if (typeof id === "undefined" || typeof project_name === "undefined") {
         res.json({ success: false, message: "Project ID and project name are required fields" });
@@ -30,13 +32,12 @@ updateProjectRouter.post("/", async (req, res) => {
     }
 
     try {
-        if (await isExistProjectById(project_name)) {
+        if (await isExistProjectById(id, project_name)) {
             res.json({ success: false, message: "Project name is already created." });
             return;
         }
 
         let project = await getProjectById(id);
-
         if (project == null) {
             res.json({ success: false, message: "Project doesn't exist." });
             return;

@@ -41,7 +41,7 @@ const updateProject = async (projectData) => {
             percentage = $8,
             updated_at = NOW()
         WHERE id = $9
-        RETURNING   , updated_at;
+        RETURNING   id, updated_at;
     `;
 
     const values = [
@@ -98,8 +98,8 @@ const getProjectById = async (id) => {
     // SQL query to select only the project_name column
     const query = `SELECT * FROM projects WHERE id = $1`; // Use parameterized query
 
-    const result = await poolQuery(query, [id, project_name]);
-    return result.rowCount > 0 ? result.rows[0] : []; // Return true if the project exists, false otherwise
+    const result = await poolQuery(query, [id]);
+    return result.rowCount > 0 ? result.rows[0] : null; // Return true if the project exists, false otherwise
 };
 
 async function assignedInventoryToProject(project_id, inventory_id, total_qty, created_by) {
@@ -222,22 +222,22 @@ async function updateMainProject(project_id) {
 
 async function changeAssignedProjectStatus(status, acual_start_date, acual_end_date, project_id) {
     try {
-      const result = await poolQuery(
-        `select * from assigned_projects where id = '${project_id}'`
-      );
-      if (result.rowCount === 0) {
-        throw new Error("Assigned project doesn't exist in system!");
-      }
-  
-      await poolQuery(`
+        const result = await poolQuery(
+            `select * from assigned_projects where id = '${project_id}'`
+        );
+        if (result.rowCount === 0) {
+            throw new Error("Assigned project doesn't exist in system!");
+        }
+
+        await poolQuery(`
               UPDATE assigned_projects
               SET status = $1, actual_start_date = $2, actual_end_date = $3
               WHERE project_id = $4
             `, [status, acual_start_date, acual_end_date, project_id]);
     } catch (error) {
-      throw new Error(error.message);
+        throw new Error(error.message);
     }
-  }
+}
 
 module.exports = {
     addAssignedProject,
