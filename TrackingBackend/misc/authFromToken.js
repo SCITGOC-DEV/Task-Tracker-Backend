@@ -12,8 +12,8 @@ const authFromToken = (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token, jwttokenkey);
-        req.idFromToken = decoded.hasura["x-hasura-user-id"];
-        req.roleFromToken = decoded.hasura["x-hasura-default-role"];
+        req.idFromToken = decoded["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
+        req.roleFromToken = decoded["https://hasura.io/jwt/claims"]["x-hasura-default-role"];
         next();
     } catch (error) {
         console.log(error);

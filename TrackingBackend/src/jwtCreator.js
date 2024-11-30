@@ -8,7 +8,15 @@ const jwtCreator = async (id, userName, role) => {
   hasura["x-hasura-allowed-roles"] = [role];
   hasura["x-hasura-user-id"] = `${userName}`;
 
-  const token = jwt.sign({ id, userName, hasura }, jwttokenkey, { expiresIn: jwtExpTime });
+  const token = jwt.sign(
+    {
+      "https://hasura.io/jwt/claims": hasura,
+      user_id: id,
+      user_name: userName,
+    },
+    jwttokenkey,
+    { expiresIn: jwtExpTime }
+  );
   return token;
 };
 
