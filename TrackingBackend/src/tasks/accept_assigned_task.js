@@ -13,7 +13,7 @@ acceptAssignedTaskRouter.post("/", async (req, res) => {
         remark
     } = req.body.input;
 
-    const requiredFields = [task_id, assigned_task_id, is_accept_user, remark];
+    const requiredFields = [task_id, assigned_task_id, is_accept_user];
     for (let i of requiredFields) {
         if (typeof i === "undefined") {
             return res.json({ success: false, message: "task_id, assigned_task_id, is_accept_user are required fields" });
@@ -21,6 +21,10 @@ acceptAssignedTaskRouter.post("/", async (req, res) => {
     }
 
     try {
+
+        if (!is_accept_user) {
+            return res.json({ success: false, message: "remark is required field" });
+        }
 
         var assignedTask = await getAssignedTaskById(assigned_task_id);
 
@@ -70,7 +74,7 @@ const updateAssignedTask = async (
             remark = $2,
             accepted_at = NOW(),
             updated_at = NOW()
-        WHERE task_id = $3 and assigned_task_id = $4
+        WHERE task_id = $3 and id = $4
         RETURNING id, updated_at;
     `;
 

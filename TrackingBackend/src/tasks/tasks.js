@@ -118,7 +118,7 @@ const updateTaskStatus = async (
     SET 
         status = $1,        
         updated_at = NOW()
-    WHERE task_id = $2
+    WHERE id = $2
     RETURNING id, updated_at;
 `;
 
