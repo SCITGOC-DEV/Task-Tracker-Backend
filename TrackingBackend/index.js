@@ -40,6 +40,8 @@ const createReturnInventoryTaskRouter = require("./src/inventories/create_return
 const updateInventoryRouter = require("./src/inventories/update_inventory");
 const updateReturnInventoryProjectRouter = require("./src/inventories/update_return_inventory_project");
 const updateReturnInventoryTaskRouter = require("./src/inventories/update_return_inventory_task");
+const acceptAssignedInventoryToProjectRouter = require("./src/inventories/accept_assigned_inventory_to_project");
+const acceptReturnedInventoryToProjectRouter = require("./src/inventories/accept_returned_inventory_project");
 
 
 const app = express();
@@ -60,34 +62,36 @@ app.use("/email", emailRouter);
 app.use("/getImage", getImageUploadUrlRouter);
 app.use("/deleteImage", deleteImageRouter);
 
-app.use("/project/addAssignedProject", authFromToken, addAssignedProjectRouter);
-app.use("/project/assignedInventoryToProject", authFromToken, assignedInventoryToProjectRouter);
-app.use("/project/changeAssignedProjectStatus", authFromToken, changeAssignedProjectStatusRouter);
-app.use("/project/changeProjectOwner", authFromToken, changeProjectOwnerRouter);
-app.use("/project/changeProjectStatus", authFromToken, changeProjectStatusRouter);
-app.use("/project/createProject", authFromToken, createProjectRouter);
+app.use("/project/addAssignedProject", authFromToken, verifyAdminRoles(['admin']), addAssignedProjectRouter);
+app.use("/project/assignedInventoryToProject", authFromToken, verifyAdminRoles(['projectadmin']), assignedInventoryToProjectRouter);
+app.use("/project/changeAssignedProjectStatus", authFromToken, verifyAdminRoles(['projectadmin']), changeAssignedProjectStatusRouter);
+app.use("/project/changeProjectOwner", authFromToken, verifyAdminRoles(['admin']), changeProjectOwnerRouter);
+app.use("/project/changeProjectStatus", authFromToken, verifyAdminRoles(['admin']), changeProjectStatusRouter);
+app.use("/project/createProject", authFromToken, verifyAdminRoles(['admin']), createProjectRouter);
 app.use("/project/getProjectByUser", authFromToken, getProjectByUserRouter);
 app.use("/project/getProjectDetails", authFromToken, getProjectDetailsRouter);
-app.use("/project/updateAssignedProject", authFromToken, updateAssignedProjectRouter);
-app.use("/project/updateProject", authFromToken, updateProjectRouter);
+app.use("/project/updateAssignedProject", authFromToken, verifyAdminRoles(['admin, projectadmin']), updateAssignedProjectRouter);
+app.use("/project/updateProject", authFromToken, verifyAdminRoles(['admin, projectadmin']), updateProjectRouter);
 
-app.use("/task/assignedInventoryToTask", authFromToken, assignedInventoryToTaskRouter);
-app.use("/task/changeUserForAssignedTask", authFromToken, changeUserForAssignedTaskRouter);
-app.use("/task/createAssignedTask", authFromToken, createAssignedTaskRouter);
-app.use("/task/createTask", authFromToken, createTaskRouter);
-app.use("/task/removeAssignedTask", authFromToken, removeAssignedTaskRouter);
-app.use("/task/updateAssignedTask", authFromToken, updateAssignedTaskRouter);
-app.use("/task/updateTask", authFromToken, updateTaskRouter);
+app.use("/task/assignedInventoryToTask", authFromToken, verifyAdminRoles(['projectadmin']), assignedInventoryToTaskRouter);
+app.use("/task/changeUserForAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), changeUserForAssignedTaskRouter);
+app.use("/task/createAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), createAssignedTaskRouter);
+app.use("/task/createTask", authFromToken, verifyAdminRoles(['projectadmin']), createTaskRouter);
+app.use("/task/removeAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), removeAssignedTaskRouter);
+app.use("/task/updateAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), updateAssignedTaskRouter);
+app.use("/task/updateTask", authFromToken, verifyAdminRoles(['projectadmin']), updateTaskRouter);
 app.use("/task/acceptAssignedTask", authFromToken, verifyAdminRoles(['user']), acceptAssignedTaskRouter);
 
 app.use("/trigger/createTransaction", createTransactionRouter);
 
-app.use("/inventory/createInventory", authFromToken, createInventoryRouter);
-app.use("/inventory/createReturnInventoryProject", authFromToken, createReturnInventoryProjectRouter);
-app.use("/inventory/createReturnInventoryTask", authFromToken, createReturnInventoryTaskRouter);
-app.use("/inventory/updateInventory", authFromToken, updateInventoryRouter);
-app.use("/inventory/updateReturnInventoryProject", authFromToken, updateReturnInventoryProjectRouter);
-app.use("/inventory/updateReturnInventoryTask", authFromToken, updateReturnInventoryTaskRouter);
+app.use("/inventory/createInventory", authFromToken, verifyAdminRoles(['admin']), createInventoryRouter);
+app.use("/inventory/createReturnInventoryProject", authFromToken, verifyAdminRoles(['projectadmin']), createReturnInventoryProjectRouter);
+app.use("/inventory/createReturnInventoryTask", authFromToken, verifyAdminRoles(['user']), createReturnInventoryTaskRouter);
+app.use("/inventory/updateInventory", authFromToken, verifyAdminRoles(['admin']), updateInventoryRouter);
+app.use("/inventory/updateReturnInventoryProject", authFromToken, verifyAdminRoles(['projectadmin']), updateReturnInventoryProjectRouter);
+app.use("/inventory/updateReturnInventoryTask", authFromToken, verifyAdminRoles(['user']), updateReturnInventoryTaskRouter);
+app.use("/inventory/acceptAssignedInventoryToProject", authFromToken, verifyAdminRoles(['admin']), acceptAssignedInventoryToProjectRouter);
+app.use("/inventory/acceptReturnedInventoryToProject", authFromToken, verifyAdminRoles(['admin']), acceptReturnedInventoryToProjectRouter);
 
 app.listen(3000, () => {
   console.log("Server is listening at port 3000");

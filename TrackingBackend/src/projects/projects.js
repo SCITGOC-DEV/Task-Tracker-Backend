@@ -4,7 +4,7 @@ const logTransaction = require("../transactions/logTransaction")
 const { ProjectStatusEnum, AssignedProjectStatusEnum,
     TaskStatusEnum, AssignedTaskStatusEnum,
     ProjectInventoryStatusEnum, TaskInventoryStatusEnum,
-    TransactionTypeEnum, TransactionStatusEnum } = require("../../src/utils/enums")
+    TransactionTypeEnum, TransactionStatusEnum, InventoryTransactionTypeEnum } = require("../../src/utils/enums")
 
 const createProject = async (projectData) => {
     const { project_name, project_description, start_date, end_date, status, percentage, created_by } = projectData;
@@ -134,14 +134,153 @@ async function assignedInventoryToProject(project_id, inventory_id, total_qty, c
             throw new Error("Inventory's quantity is not enough!");
         }
 
-        var pj_inv_res = await poolQuery(`
-              insert into project_inventories(project_id, inventory_id, total_qty,used_qty , status, is_return, created_by)
-              values($1, $2, $3, $4, $5, $6, $7)
-            `, [project_id, inventory_id, total_qty, 0, status, is_return, created_by]);
+        var getExistingPI = await poolQuery(`
+            SELECT * 
+            FROM project_inventories
+            WHERE project_id = $1 and inventory_id = $2
+          `, [project_id, inventory_id]);
+
+        if (getExistingPI.rowCount == 0) {
+            var create_pj_inv_res = await poolQuery(`
+                insert into project_inventories(project_id, inventory_id, total_qty, used_qty, status, is_return, created_by)
+                values($1, $2, $3, $4, $5, $6, $7)
+              `, [project_id, inventory_id, total_qty, 0, status, is_return, created_by]);
+
+        } else {
+            var update_pj_inv_res = await poolQuery(`
+                UPDATE project_inventories
+                SET total_qty = total_qty + $1
+                WHERE id  = $2
+              `, [total_qty, getExistingPI.id]);
+        }
 
         await poolQuery(`update inventories set units_on_request = ${total_request} where id = ${inventory_id}`);
 
         return { scit_control_number: inventories.scit_control_number, project_name: project.project_name };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+async function createProjectInventoryTransaction(project_id, inventory_id, total_qty, created_by, requested_at, transaction_type, description) {
+    try {
+        const project = await poolQuery(
+            `select * from projects where id = '${project_id}'`
+        );
+
+        if (project.rowCount === 0) {
+            throw new Error("No project found!");
+        }
+
+        const inventories = await poolQuery(
+            `select * from inventories where id = '${inventory_id}'`
+        );
+
+        if (inventories.rowCount === 0) {
+            throw new Error("No inventory found!");
+        }
+
+        var is_return_inventory = inventories.rows[0].is_return ? ProjectInventoryStatusEnum.RETURN : ProjectInventoryStatusEnum.NO_RETURN;
+
+        var pj_inv_res = await poolQuery(`
+              insert into project_inventory_transactions(project_id, inventory_id, qty, request_admin, requested_at, transaction_type, description, is_return_inventory)
+              values($1, $2, $3, $4, $5, $6, $7, $8)
+            `, [project_id, inventory_id, total_qty, created_by, requested_at, transaction_type, description, is_return_inventory]);
+
+        return {
+            scit_control_number: inventories.scit_control_number,
+            project_name: project.project_name,
+            transaction_type: transaction_type,
+            id : pj_inv_res.rows[0].id,
+            created_at : pj_inv_res.rows[0].created_at
+        };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+async function acceptAssignedInventoryToProject(project_inventory_transaction_id, approved_qty, approved_admin, is_approved, remark) {
+    try {
+
+        const project_inventory_transaction = await poolQuery(
+            `select * from project_inventory_transactions where id = '${project_inventory_transaction_id}'`
+        );
+
+        if (project_inventory_transaction.rowCount === 0) {
+            throw new Error("No project inventory transaction found!");
+        }
+
+        if (project_inventory_transaction.is_approved) {
+            throw new Error("Inventory was already approved.");
+        }
+
+        const project = await poolQuery(
+            `select * from projects where id = '${project_inventory_transaction.project_id}'`
+        );
+
+        if (project.rowCount === 0) {
+            throw new Error("No project found!");
+        }
+
+        const inventories = await poolQuery(
+            `select * from inventories where id = '${project_inventory_transaction.inventory_id}'`
+        );
+
+        if (inventories.rowCount === 0) {
+            throw new Error("No inventory found!");
+        }
+
+        var qty = inventories.rows[0].quantity;
+        var units_on_request = inventories.rows[0].units_on_request;
+        var total_request = units_on_request + approved_qty;
+
+        if (total_request > qty) {
+            throw new Error("Inventory's quantity is not enough!");
+        }
+
+        const date = new Date();
+        var pj_inv_res = await poolQuery(`
+              UPDATE project_inventory_transactions
+              SET  approved_qty = $1,
+                   approved_admin = $2, 
+                   is_approved = $3, 
+                   remark = $4,
+                   approved_at = $5
+                   updated_at = $5
+              WHERE id = $6
+            `, [approved_qty, approved_admin, is_approved, remark, date, project_inventory_transaction_id]);
+
+        if (approved_qty > 0) {
+            var getExistingPI = await poolQuery(`
+                SELECT * 
+                FROM project_inventories
+                WHERE project_id = $1 and inventory_id = $2
+              `, [project_id, inventory_id]);
+
+            if (getExistingPI.rowCount == 0) {
+                var create_pj_inv_res = await poolQuery(`
+                    insert into project_inventories(project_id, inventory_id, total_qty, used_qty, status, is_return, created_by)
+                    values($1, $2, $3, $4, $5, $6, $7)
+                  `, [project_id, inventory_id, total_qty, 0, status, is_return, created_by]);
+
+            } else {
+                var update_pj_inv_res = await poolQuery(`
+                    UPDATE project_inventories
+                    SET total_qty = total_qty + $1
+                    WHERE id  = $2
+                  `, [total_qty, getExistingPI.id]);
+            }
+
+            await poolQuery(`update inventories set units_on_request = ${total_request} where id = ${inventory_id}`);
+        }
+
+        return {
+            scit_control_number: inventories.scit_control_number,
+            project_name: project.project_name,
+            transaction_type: project_inventory_transaction.transaction_type,
+            project_id: project_id,
+            inventory_id: inventory_id
+        };
     } catch (error) {
         throw new Error(error.message);
     }
@@ -250,5 +389,7 @@ module.exports = {
     changeProjectStatus,
     getAssignedProjectById,
     changeAssignedProjectStatus,
-    updateMainProject
+    updateMainProject,
+    createProjectInventoryTransaction,
+    acceptAssignedInventoryToProject
 };
