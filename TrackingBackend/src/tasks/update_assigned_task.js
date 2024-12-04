@@ -1,6 +1,7 @@
 const express = require("express");
 const pool = require("../../misc/databaseCon");
 const poolQuery = require("../../misc/poolQuery");
+const { TaskStatusEnum } = require("../utils/enums");
 
 const updateAssignedTaskRouter = express.Router();
 
@@ -68,6 +69,15 @@ const updateAssignedTask = async (
     percentage,
     status
 ) => {
+
+    const assignedTask = await poolQuery(
+        `select * from assigned_tasks where id = '${id}' and active = true`
+    );
+
+    if (assignedTask.rowCount === 0) {
+        throw new Error("No assigend task found!");
+    }
+
     const query = `
         UPDATE assigned_tasks
         SET 
@@ -99,6 +109,39 @@ const updateAssignedTask = async (
     ];
 
     const result = await poolQuery(query, values);
+
+    if (result.rowCount > 0 && assignedTask.percentage > percentage) {
+        await updateAssignedTaskPercentage(task_id, status);
+    }
+
+    return result.rows; // Return the updated task details
+};
+
+const updateAssignedTaskPercentage = async (
+    task_id,
+    status
+) => {
+
+    const getAllTaskByTaskId = await poolQuery(
+        `select * from assigned_tasks where task_id = '${task_id}' and active = true`
+    );
+
+    const total_percentage = getAllTaskByTaskId((total, task) => total + task.percentage, 0);
+    let current_percentage = total_percentage / getAllTaskByTaskId.rowCount;
+
+    const task = await poolQuery(
+        `select * from tasks where id = '${task_id}'`
+    );
+
+    status = current_percentage >= 100 ? TaskStatusEnum.COMPLETED : (task.status !== status ? status : task.status);
+    current_percentage = current_percentage >= 100 ? 100 : current_percentage;
+
+    const updateTaskPercentage = await poolQuery(`
+        UPDATE tasks
+        SET percentage = $1,
+            status = $2
+        WHERE id = $3
+        `, [current_percentage, status, task_id]);
     return result.rows; // Return the updated task details
 };
 
