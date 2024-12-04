@@ -22,7 +22,10 @@ acceptAssignedTaskRouter.post("/", async (req, res) => {
 
     try {
 
-        if (!is_accept_user) {
+        let created_by = req.idFromToken;
+        
+
+        if (!is_accept_user && (typeof remark == undefined || remark == null || remark == '' || remark.trim() == '') ) {
             return res.json({ success: false, message: "remark is required field" });
         }
 

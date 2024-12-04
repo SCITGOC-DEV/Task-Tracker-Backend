@@ -66,9 +66,20 @@ const TransactionStatusEnum = Object.freeze({
     ASSIGNED: "ASSIGNED",
     ADD: "ADD",
     REMOVE : "REMOVE",
-    CHANGE:'CHANGE'
+    CHANGE:'CHANGE',
+    REQUEST: 'Request',
+    RETURNED: 'Returned',
+    APPROVED: 'Approved',
+    REJECT: 'Reject'
 });
 
+// Enum for project_inventories table status
+const InventoryTransactionTypeEnum = Object.freeze({
+    REQUEST: 'Request',
+    RETURNED: 'Returned',
+    APPROVED: 'Approved',
+    REJECT: 'Reject'
+});
 
 // Export all the enums
 module.exports = {
@@ -79,5 +90,6 @@ module.exports = {
     ProjectInventoryStatusEnum,
     TaskInventoryStatusEnum,
     TransactionTypeEnum,
-    TransactionStatusEnum
+    TransactionStatusEnum,
+    InventoryTransactionTypeEnum
 };

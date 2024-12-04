@@ -39,6 +39,8 @@ updateAssignedTaskRouter.post("/", async (req, res) => {
             status
         );
 
+        const assignedTasks = await getAssignedTaskById(id);
+
         if (result) {
             res.json({
                 success: true,
@@ -95,6 +97,19 @@ const updateAssignedTask = async (
         status,
         id,
     ];
+
+    const result = await poolQuery(query, values);
+    return result.rows; // Return the updated task details
+};
+
+const getAssignedTaskById = async (id) => {
+    const query = `
+        SELECT *
+        FROM assigned_tasks       
+        WHERE id = $1 and active = true and is_accept_user = true;
+    `;
+
+    const values = [id];
 
     const result = await poolQuery(query, values);
     return result.rows[0]; // Return the updated task details
