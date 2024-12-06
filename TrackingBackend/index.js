@@ -78,7 +78,7 @@ app.use("/task/changeUserForAssignedTask", authFromToken, verifyAdminRoles(['pro
 app.use("/task/createAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), createAssignedTaskRouter);
 app.use("/task/createTask", authFromToken, verifyAdminRoles(['projectadmin']), createTaskRouter);
 app.use("/task/removeAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), removeAssignedTaskRouter);
-app.use("/task/updateAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), updateAssignedTaskRouter);
+app.use("/task/updateAssignedTask", authFromToken, verifyAdminRoles(['projectadmin', 'user']), updateAssignedTaskRouter);
 app.use("/task/updateTask", authFromToken, verifyAdminRoles(['projectadmin']), updateTaskRouter);
 app.use("/task/acceptAssignedTask", authFromToken, verifyAdminRoles(['user']), acceptAssignedTaskRouter);
 
