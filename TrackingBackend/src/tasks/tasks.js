@@ -143,6 +143,14 @@ const createAssignedTask = async (taskData) => {
         created_by
     } = taskData;
 
+    const checkExistingAssignTaskByUser = await poolQuery(
+        `select * from assigned_tasks where task_id = '${task_id}' and active = true and fk_assigned_to = '${fk_assigned_to}'`
+    );
+
+    if(checkExistingAssignTaskByUser.rowCount > 0){
+        throw new Error(`${fk_assigned_to} was already assigned in this task`);
+    }
+
     // SQL query to insert a new assigned task
     const query = `
         INSERT INTO assigned_tasks (

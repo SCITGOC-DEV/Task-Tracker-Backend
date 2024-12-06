@@ -40,8 +40,6 @@ updateAssignedTaskRouter.post("/", async (req, res) => {
             status
         );
 
-        const assignedTasks = await getAssignedTaskById(id);
-
         if (result) {
             res.json({
                 success: true,
@@ -76,6 +74,9 @@ const updateAssignedTask = async (
 
     if (assignedTask.rowCount === 0) {
         throw new Error("No assigend task found!");
+    } 
+    else if (!assignedTask.rows[0].is_accept_user) {
+        throw new Error(`${assignedTask.rows[0].fk_assigned_to} needs to accept this task`);
     }
 
     const query = `
@@ -110,7 +111,7 @@ const updateAssignedTask = async (
 
     const result = await poolQuery(query, values);
 
-    if (result.rowCount > 0 && assignedTask.percentage > percentage) {
+    if (result.rowCount > 0) {
         await updateAssignedTaskPercentage(task_id, status);
     }
 
@@ -126,14 +127,10 @@ const updateAssignedTaskPercentage = async (
         `select * from assigned_tasks where task_id = '${task_id}' and active = true`
     );
 
-    const total_percentage = getAllTaskByTaskId((total, task) => total + task.percentage, 0);
+    const total_percentage = getAllTaskByTaskId.rows.reduce((total, task) => parseFloat(total) + parseFloat(task.percentage), 0);
     let current_percentage = total_percentage / getAllTaskByTaskId.rowCount;
 
-    const task = await poolQuery(
-        `select * from tasks where id = '${task_id}'`
-    );
-
-    status = current_percentage >= 100 ? TaskStatusEnum.COMPLETED : (task.status !== status ? status : task.status);
+    status = current_percentage >= 100 ? TaskStatusEnum.COMPLETED : (current_percentage <= 0 ? TaskStatusEnum.PENDING : TaskStatusEnum.PROGRESSING);
     current_percentage = current_percentage >= 100 ? 100 : current_percentage;
 
     const updateTaskPercentage = await poolQuery(`
@@ -142,7 +139,7 @@ const updateAssignedTaskPercentage = async (
             status = $2
         WHERE id = $3
         `, [current_percentage, status, task_id]);
-    return result.rows; // Return the updated task details
+    return updateTaskPercentage.rows; // Return the updated task details
 };
 
 const getAssignedTaskById = async (id) => {

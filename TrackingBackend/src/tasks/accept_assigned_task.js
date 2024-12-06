@@ -21,9 +21,7 @@ acceptAssignedTaskRouter.post("/", async (req, res) => {
     }
 
     try {
-
-        let created_by = req.idFromToken;
-        
+        let created_by = req.idFromToken;        
 
         if (!is_accept_user && (typeof remark == undefined || remark == null || remark == '' || remark.trim() == '') ) {
             return res.json({ success: false, message: "remark is required field" });
@@ -70,22 +68,26 @@ const updateAssignedTask = async (
     remark
 ) => {
 
+    const active = is_accept_user;
     const query = `
         UPDATE assigned_tasks
         SET 
             is_accept_user = $1,
             remark = $2,
+            active = $3,
             accepted_at = NOW(),
             updated_at = NOW()
-        WHERE task_id = $3 and id = $4
+        WHERE task_id = $4 and id = $5
         RETURNING id, updated_at;
     `;
 
     const values = [
         is_accept_user,
         remark,
+        active,
         task_id,
         assigned_task_id
+
     ];
 
     const result = await poolQuery(query, values);

@@ -63,7 +63,7 @@ async function assignedInventoryToTask(project_id, inventory_id, task_id, total_
     else
       status = ProjectInventoryStatusEnum.NULL
 
-    if (total_request > total_qty) {
+    if (total_request > pj_total_qty) {
       throw new Error("Inventory's quantity is not enough for this project!");
     }
 
