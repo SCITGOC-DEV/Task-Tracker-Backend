@@ -8,28 +8,26 @@ const { TransactionTypeEnum, TransactionStatusEnum, InventoryTransactionTypeEnum
 
 assignedInventoryToProjectRouter.post('/', async (req, res) => {
   const { project_id, inventory_id, total_qty, requested_at, description } = req.body.input;  // extract inputs
-  
+
   let request_admin = req.idFromToken;
 
   try {
     // Validate required fields
     const requiredFields = [project_id, inventory_id, total_qty, requested_at];
-    for (const [fieldName, fieldValue] of Object.entries(requiredFields)) {
-      if (_.isEmpty(fieldValue?.trim())) {
-        return res.json({
-          success: false,
-          message: `Missing required field: ${fieldName}`
-        });
+
+    for (let field of requiredFields) {
+      if (typeof field === "undefined" || (typeof field === "string" && _.isEmpty(field.trim()))) {
+        return res.json({ success: false, message: "Missing required fields (project_id, inventory_id, total_qty, requested_at)." });
       }
     }
 
     const result = await createProjectInventoryTransaction(project_id, inventory_id, total_qty, request_admin, requested_at, InventoryTransactionTypeEnum.REQUEST, description);
 
-    logTransaction(TransactionTypeEnum.INVENTORY, TransactionStatusEnum.REQUEST, `Inventory : ${result.scit_control_number}  to Project: ${result.project_name}`, request_admin);
+    await logTransaction(TransactionTypeEnum.INVENTORY, TransactionStatusEnum.REQUEST, `Inventory : ${result.scit_control_number}  to Project: ${result.project_name}`, request_admin);
 
     res.json({
       id: result.id,
-      created_at : result.created_at,
+      created_at: result.created_at,
       success: true,
       message: "Assign inventory to project request successfully"
     });

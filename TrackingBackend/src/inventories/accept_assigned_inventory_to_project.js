@@ -1,11 +1,11 @@
 const poolQuery = require("../../misc/poolQuery.js");
 const express = require("express");
-const { updateProjectInventoryTransaction: acceptAssignedInventoryToProject, assignedInventoryToProject } = require("../projects/projects.js")
+const { acceptAssignedInventoryToProject } = require("../projects/projects.js")
 const _ = require('lodash');
 
 const acceptAssignedInventoryToProjectRouter = express.Router();
 const logTransaction = require("../transactions/logTransaction.js");
-const { TransactionStatusEnum } = require("../utils/enums.js");
+const { TransactionStatusEnum, TransactionTypeEnum } = require("../utils/enums.js");
 
 acceptAssignedInventoryToProjectRouter.post('/', async (req, res) => {
   const { project_inventory_transaction_id, approved_qty, is_approved, remark } = req.body.input;  // extract inputs
@@ -15,12 +15,9 @@ acceptAssignedInventoryToProjectRouter.post('/', async (req, res) => {
   try {
     // Validate required fields
     const requiredFields = [project_inventory_transaction_id, approved_qty, is_approved];
-    for (const [fieldName, fieldValue] of Object.entries(requiredFields)) {
-      if (_.isEmpty(fieldValue?.trim())) {
-        return res.json({
-          success: false,
-          message: `Missing required field: ${fieldName}`
-        });
+    for (let field of requiredFields) {
+      if (typeof field === "undefined" || (typeof field === "string" && _.isEmpty(field.trim()))) {
+        return res.json({ success: false, message: "Missing required fields (project_inventory_transaction_id, approved_qty, is_approved)." });
       }
     }
 
@@ -28,7 +25,7 @@ acceptAssignedInventoryToProjectRouter.post('/', async (req, res) => {
     
     let status = is_approved ? TransactionStatusEnum.APPROVED : TransactionStatusEnum.REJECT;
     
-    logTransaction(TransactionTypeEnum.INVENTORY, status, `Inventory : ${result.scit_control_number}  to Project: ${result.project_name}'s ${result.transaction_type} is ${status}`, request_admin);
+    logTransaction(TransactionTypeEnum.INVENTORY, status, `Inventory : ${result.scit_control_number}  to Project: ${result.project_name}'s ${result.transaction_type} is ${status}`, approved_admin);
 
     res.json({
       success: true,

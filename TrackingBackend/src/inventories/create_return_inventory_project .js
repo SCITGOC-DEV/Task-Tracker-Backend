@@ -1,6 +1,6 @@
 const express = require("express");
 const { createProjectInventoryTransaction } = require("../projects/projects.js")
-const { InventoryTransactionTypeEnum } = require("../utils/enums.js");
+const { InventoryTransactionTypeEnum, TransactionTypeEnum, TransactionStatusEnum } = require("../utils/enums.js");
 const _ = require('lodash');
 
 const createReturnInventoryProjectRouter = express.Router();
@@ -14,12 +14,9 @@ createReturnInventoryProjectRouter.post('/', async (req, res) => {
   try {
     // Validate required fields
     const requiredFields = [project_id, inventory_id, total_qty, requested_at];
-    for (const [fieldName, fieldValue] of Object.entries(requiredFields)) {
-      if (_.isEmpty(fieldValue?.trim())) {
-        return res.json({
-          success: false,
-          message: `Missing required field: ${fieldName}`
-        });
+    for (let field of requiredFields) {
+      if (typeof field === "undefined" || (typeof field === "string" && _.isEmpty(field.trim()))) {
+        return res.json({ success: false, message: "Missing required fields (project_id, inventory_id, total_qty, requested_at)." });
       }
     }
 
