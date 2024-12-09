@@ -65,7 +65,7 @@ createTaskRouter.post("/", async (req, res) => {
             created_by
         });
 
-        logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.CREATE, `Create task - Task Name: ${task_name}`, created_by);
+        await logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.CREATE, `Create task - Task Name: ${task_name}`, created_by);
         res.json({ success: true, message: "Task created successfully", id: result.id, created_at: result.created_at });
     } catch (error) {
         res.json({ success: false, message: error.message });

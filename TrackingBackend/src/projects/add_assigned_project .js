@@ -33,7 +33,7 @@ addAssignedProjectRouter.post("/", async (req, res) => {
             project_id, assigned_to, start_date, end_date, status, percentage, remark, created_by
         });
 
-        logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.ASSIGNED, `Assigned project to ${assigned_to} by ${created_by}.`, created_by);
+        await logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.ASSIGNED, `Assigned project to ${assigned_to} by ${created_by}.`, created_by);
 
         res.json({ success: true, message: "Assigned project created successfully", id: result.id, created_at: result.created_at });
     } catch (error) {

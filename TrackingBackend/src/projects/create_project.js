@@ -37,7 +37,7 @@ createProjectRouter.post("/", async (req, res) => {
             project_name, project_description, start_date, end_date, status, percentage, created_by
         });
 
-        logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.CREATE, `Create project - Project Name: ${project_name}`, created_by);
+        await logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.CREATE, `Create project - Project Name: ${project_name}`, created_by);
 
         res.json({ success: true, message: "Project created successfully", id: result.id, created_at: result.created_at });
     } catch (error) {

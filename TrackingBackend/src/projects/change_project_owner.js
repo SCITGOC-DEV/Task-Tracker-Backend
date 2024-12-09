@@ -24,7 +24,7 @@ changeProjectOwnerRouter.post('/', async (req, res) => {
       created_by
     });
 
-    logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.ASSIGNED, `Change project owner to ${new_name} by ${old_name}`, created_by);
+    await logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.ASSIGNED, `Change project owner to ${new_name} by ${old_name}`, created_by);
     res.json({
       success: true,
       message: "Project status updated successfully"

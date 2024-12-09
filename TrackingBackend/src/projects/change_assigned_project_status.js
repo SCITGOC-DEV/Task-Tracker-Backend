@@ -27,9 +27,9 @@ changeProjectStatusRouter.post('/', async (req, res) => {
     await changeAssignedProjectStatus(status, actual_start_date, actual_end_date, project_id);
     
     if (project.status != status)
-      logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.CHANGE, `Update project -  Status : ${project.status} to ${status}.`, created_by);
+      await logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.CHANGE, `Update project -  Status : ${project.status} to ${status}.`, created_by);
     else
-      logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.UPDATE, `Update project.`, created_by);
+      await logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.UPDATE, `Update project.`, created_by);
 
     res.json({
       success: true,

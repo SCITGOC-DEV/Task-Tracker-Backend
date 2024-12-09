@@ -78,7 +78,9 @@ const InventoryTransactionTypeEnum = Object.freeze({
     REQUEST: 'Request',
     RETURNED: 'Returned',
     APPROVED: 'Approved',
-    REJECT: 'Reject'
+    REJECT: 'Reject',
+    ADD: 'Add',
+    REDUCE: 'Reduce',
 });
 
 // Export all the enums

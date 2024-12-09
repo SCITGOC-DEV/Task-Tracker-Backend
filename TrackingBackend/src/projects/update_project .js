@@ -48,9 +48,9 @@ updateProjectRouter.post("/", async (req, res) => {
         });
 
         if (project.status != status)
-            logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.CHANGE, `Update project -  Status : ${project.status} to ${status}.`, created_by);
+            await logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.CHANGE, `Update project -  Status : ${project.status} to ${status}.`, created_by);
         else
-            logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.UPDATE, `Update project.`, created_by);
+            await logTransaction(TransactionTypeEnum.PROJECT, TransactionStatusEnum.UPDATE, `Update project.`, created_by);
 
         res.json({ success: true, message: "Project updated successfully", id: result.id, updated_at: result.updated_at });
     } catch (error) {

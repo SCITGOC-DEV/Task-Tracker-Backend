@@ -22,7 +22,7 @@ createReturnInventoryProjectRouter.post('/', async (req, res) => {
 
     const result = await createProjectInventoryTransaction(project_id, inventory_id, total_qty, request_admin, requested_at, InventoryTransactionTypeEnum.RETURNED, description);
 
-    logTransaction(TransactionTypeEnum.INVENTORY, TransactionStatusEnum.RETURNED, `Inventory : ${result.scit_control_number}  to Project: ${result.project_name}`, request_admin);
+    await logTransaction(TransactionTypeEnum.INVENTORY, TransactionStatusEnum.RETURNED, `Inventory : ${result.scit_control_number}  to Project: ${result.project_name}`, request_admin);
 
     res.json({
       id: result.id,

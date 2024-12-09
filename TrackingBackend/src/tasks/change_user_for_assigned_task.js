@@ -71,7 +71,7 @@ changeUserForAssignedTaskRouter.post("/", async (req, res) => {
             remark
         });
 
-        logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.CHANGE, `Change assigned task from ${assignedTask.fk_assigned_to} to ${new_fk_assigned_to} `, created_by);
+        await logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.CHANGE, `Change assigned task from ${assignedTask.fk_assigned_to} to ${new_fk_assigned_to} `, created_by);
 
         if (result) {
             res.json({

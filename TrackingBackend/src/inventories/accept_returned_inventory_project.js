@@ -24,7 +24,7 @@ acceptReturnedInventoryToProjectRouter.post('/', async (req, res) => {
 
     let status = is_approved ? TransactionStatusEnum.APPROVED : TransactionStatusEnum.REJECT;
 
-    logTransaction(TransactionTypeEnum.INVENTORY, status, `Inventory : ${result.scit_control_number}  to Project: ${result.project_name}'s ${result.transaction_type} is ${status}`, approved_admin);
+    await logTransaction(TransactionTypeEnum.INVENTORY, status, `Inventory : ${result.scit_control_number}  to Project: ${result.project_name}'s ${result.transaction_type} is ${status}`, approved_admin);
 
     res.json({
       success: true,

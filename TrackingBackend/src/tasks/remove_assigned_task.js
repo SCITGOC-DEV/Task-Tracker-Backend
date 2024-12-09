@@ -46,7 +46,7 @@ removeAssignedTaskRouter.post("/", async (req, res) => {
             remark
         );
 
-        logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.REMOVE, `Remove Task: ${task.task_name} from ${assignedTask.fk_assigned_to}`, created_by);
+        await logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.REMOVE, `Remove Task: ${task.task_name} from ${assignedTask.fk_assigned_to}`, created_by);
 
         if (result) {
             res.json({
