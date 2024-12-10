@@ -10,11 +10,11 @@ const express = require("express");
 const assignedInventoryToTaskRouter = express.Router();
 
 assignedInventoryToTaskRouter.post('/', async (req, res) => {
-  const { project_id, inventory_id, task_id, total_qty, rent_date, return_date, remark, request_user_name, request_date } = req.body.input;  // extract inputs
+  const { project_id, inventory_id, task_id, total_qty, assigned_date, return_date, remark } = req.body.input;  // extract inputs
 
   try {
-    let created_by = req.idFromToken;
-    await assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, rent_date, return_date, remark, request_user_name, request_date);
+    let assigned_by = req.idFromToken;
+    await assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, assigned_date, return_date, remark);
 
     const inventory = await poolQuery(
       `select * from inventories where id = '${inventory_id}'`
@@ -29,7 +29,7 @@ assignedInventoryToTaskRouter.post('/', async (req, res) => {
     if (inventory.rowCount === 0) {
       throw new Error("No inventory found!");
     }
-    logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.ASSIGNED, `Inventory: ${inventory.scit_control_number} assigned to Task: ${task.task_name}.`, created_by);
+    await logTransaction(TransactionTypeEnum.TASK, TransactionStatusEnum.ASSIGNED, `Inventory: ${inventory.scit_control_number} assigned to Task: ${task.task_name}.`, assigned_by);
 
     res.json({
       success: true,
@@ -43,7 +43,7 @@ assignedInventoryToTaskRouter.post('/', async (req, res) => {
   }
 });
 
-async function assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, rent_date, return_date, remark, request_user_name, request_date) {
+async function assignedInventoryToTask(project_id, inventory_id, task_id, total_qty, assigned_date, return_date, remark) {
   try {
     const result = await poolQuery(
       `select * from project_inventories where project_id = '${project_id}' and inventory_id = '${inventory_id}'`
@@ -73,15 +73,13 @@ async function assignedInventoryToTask(project_id, inventory_id, task_id, total_
             inventory_id,
             task_id,
             total_qty,
-            rent_date,
+            assigned_date,
             return_date,
             status,
             remark,
-            request_user_name,
-            request_date, 
             is_return)
             VALUES($1, $2 ,$3 ,$4 ,$5 ,$6 ,$7 ,$8 ,$9 ,$10 , $11)
-          `, [project_id, inventory_id, task_id, total_qty, rent_date, return_date, status, remark, request_user_name, request_date, is_return]);
+          `, [project_id, inventory_id, task_id, total_qty, assigned_date, return_date, status, remark, is_return]);
 
     await poolQuery(`UPDATE project_inventories SET used_qty = ${total_request} WHERE project_id = ${project_id} AND inventory_id = ${inventory_id}`);
 

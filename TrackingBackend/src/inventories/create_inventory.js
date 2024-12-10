@@ -5,7 +5,9 @@ const logTransaction = require("../transactions/logTransaction")
 const { ProjectStatusEnum, AssignedProjectStatusEnum,
     TaskStatusEnum, AssignedTaskStatusEnum,
     ProjectInventoryStatusEnum, TaskInventoryStatusEnum,
-    TransactionTypeEnum, TransactionStatusEnum } = require("../../src/utils/enums")
+    TransactionTypeEnum, TransactionStatusEnum, 
+    InventoryTransactionTypeEnum} = require("../../src/utils/enums");
+const { createInventoryTransaction } = require("./inventories");
 
 const createInventoryRouter = express.Router();
 
@@ -50,16 +52,18 @@ createInventoryRouter.post("/", async (req, res) => {
             }
         }
 
+        const scitControlNumber = await getNextScitControlNumber(); // Fetch next scit_control_number      
+
         const result = await createInventory({
             supplier, country, address, contact_number, email_address, website, unit_price, quantity, total_amount,
             date_purchase_received, date_release, total_unit_release, delivered_to_client, delivery_receipt_no,
             unit_return, location_stock, date_return, stock_office, total_stock_amount, serial_number_start,
-            serial_number_end, is_return, type, inventory_category_id, part_number, created_by
+            serial_number_end, is_return, type, inventory_category_id, part_number, scitControlNumber, created_by
         });
 
-        const scitControlNumber = await getNextScitControlNumber(result.id); // Fetch next scit_control_number
-       
-        logTransaction(TransactionTypeEnum.INVENTORY, TransactionStatusEnum.CREATE, `Create inventory - SCIT Control Number: ${scitControlNumber}`, created_by);
+        await createInventoryTransaction(result.id, quantity, InventoryTransactionTypeEnum.ADD);
+
+        await logTransaction(TransactionTypeEnum.INVENTORY, TransactionStatusEnum.CREATE, `Create inventory - SCIT Control Number: ${scitControlNumber}`, created_by);
 
         res.json({ success: true, message: "Inventory created successfully", inventoryId: result.id, scit_control_number: scitControlNumber, created_at: result.created_at });
     } catch (error) {
@@ -69,7 +73,7 @@ createInventoryRouter.post("/", async (req, res) => {
 });
 
 // Function to get the next SCIT control number
-const getNextScitControlNumber = async (inventoryId) => {
+const getNextScitControlNumber = async () => {
     const sequenceQuery = `
         UPDATE sequences
         SET number = number + 1
@@ -82,15 +86,6 @@ const getNextScitControlNumber = async (inventoryId) => {
 
     // Format the SCIT control number
     const scitControlNumber = `SCIT${String(newSequence).padStart(5, '0')}`;
-
-    const update_scit_control_number = `
-        UPDATE inventories
-        SET scit_control_number = '${scitControlNumber}'
-        WHERE id = ${inventoryId}
-    `;
-
-    const res = await poolQuery(update_scit_control_number);
-
     return scitControlNumber;
 };
 

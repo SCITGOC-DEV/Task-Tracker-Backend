@@ -43,6 +43,8 @@ const updateReturnInventoryProjectRouter = require("./src/inventories/update_ret
 const updateReturnInventoryTaskRouter = require("./src/inventories/update_return_inventory_task");
 const acceptAssignedInventoryToProjectRouter = require("./src/inventories/accept_assigned_inventory_to_project");
 const acceptReturnedInventoryToProjectRouter = require("./src/inventories/accept_returned_inventory_project");
+const accceptReturnedInventoryTaskRouter = require("./src/inventories/accept_returned_inventory_task");
+const addQtyInventoryRouter = require("./src/inventories/add_qty_inventory");
 const addQtyInventoryRouter = require("./src/inventories/add_qty_inventory");
 
 
@@ -95,7 +97,9 @@ app.use("/inventory/updateReturnInventoryProject", authFromToken, verifyAdminRol
 app.use("/inventory/updateReturnInventoryTask", authFromToken, verifyAdminRoles(['user']), updateReturnInventoryTaskRouter);
 app.use("/inventory/acceptAssignedInventoryToProject", authFromToken, verifyAdminRoles(['admin']), acceptAssignedInventoryToProjectRouter);
 app.use("/inventory/acceptReturnedInventoryToProject", authFromToken, verifyAdminRoles(['admin']), acceptReturnedInventoryToProjectRouter);
+app.use("/inventory/acceptReturnedInventoryToTask", authFromToken, verifyAdminRoles('admin', ['projectadmin']), accceptReturnedInventoryTaskRouter);
 app.use("/inventory/addQtyInventory", authFromToken, verifyAdminRoles(['admin']), addQtyInventoryRouter);
+app.use("/inventory/updateQtyInventory", authFromToken, verifyAdminRoles(['admin']), updateQtyInventoryRouter);
 
 app.listen(3000, () => {
   console.log("Server is listening at port 3000");
