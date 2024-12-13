@@ -45,7 +45,7 @@ const acceptAssignedInventoryToProjectRouter = require("./src/inventories/accept
 const acceptReturnedInventoryToProjectRouter = require("./src/inventories/accept_returned_inventory_project");
 const accceptReturnedInventoryTaskRouter = require("./src/inventories/accept_returned_inventory_task");
 const addQtyInventoryRouter = require("./src/inventories/add_qty_inventory");
-const addQtyInventoryRouter = require("./src/inventories/add_qty_inventory");
+//const updateQtyInventoryRouter = require("./src/inventories/update_qty_inventory");
 
 
 const app = express();
@@ -99,7 +99,7 @@ app.use("/inventory/acceptAssignedInventoryToProject", authFromToken, verifyAdmi
 app.use("/inventory/acceptReturnedInventoryToProject", authFromToken, verifyAdminRoles(['admin']), acceptReturnedInventoryToProjectRouter);
 app.use("/inventory/acceptReturnedInventoryToTask", authFromToken, verifyAdminRoles('admin', ['projectadmin']), accceptReturnedInventoryTaskRouter);
 app.use("/inventory/addQtyInventory", authFromToken, verifyAdminRoles(['admin']), addQtyInventoryRouter);
-app.use("/inventory/updateQtyInventory", authFromToken, verifyAdminRoles(['admin']), updateQtyInventoryRouter);
+//app.use("/inventory/updateQtyInventory", authFromToken, verifyAdminRoles(['admin']), updateQtyInventoryRouter);
 
 app.listen(3000, () => {
   console.log("Server is listening at port 3000");
