@@ -31,22 +31,25 @@ const adminLogInHandler = async (admin_name, password) => {
 
     const rightPassword = result.rows[0].password;
     const userId = result.rows[0].id;
-    await checkPassword(password, rightPassword);
+    const isResetPassword = result.rows[0].is_reset_password;
+    const passwordStatus = await bcrypt.compare(password, rightPassword);
+
+    if (passwordStatus == false && isResetPassword != null) {
+      throw new Error("Your password has been reset! Please contact the site administrator.");
+    } else if (passwordStatus == false) {
+      throw new Error("Wrong Password!");
+    }
+
     const userName = result.rows[0].username;
+    await poolQuery(
+      `update admin set is_reset_password = NULL where username = '${userName}'`
+    );
 
     const token = await jwtCreator(userId, userName, result.rows[0].role);
 
     return token;
   } catch (error) {
     throw new Error(error.message);
-  }
-};
-
-const checkPassword = async (password, hashedPassword) => {
-  const passwordStatus = await bcrypt.compare(password, hashedPassword);
-  console.log("passwordStatus");
-  if (passwordStatus == false) {
-    throw new Error("Wrong Password!");
   }
 };
 

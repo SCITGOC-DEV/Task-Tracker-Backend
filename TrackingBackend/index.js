@@ -12,6 +12,9 @@ const getImageUploadUrlRouter = require("./src/imageUpload");
 const deleteImageRouter = require("./src/deleteImage");
 const userRegisterRouter = require("./src/userRegister");
 
+const projectAdminResetPasswordRouter = require("./src/auth/project_admin_reset_password");
+const userResetPasswordRouter = require("./src/auth/user_reset_password");
+
 const addAssignedProjectRouter = require("./src/projects/add_assigned_project ");
 const assignedInventoryToProjectRouter = require("./src/projects/assigned_inventory_to_project");
 const changeAssignedProjectStatusRouter = require("./src/projects/change_assigned_project_status");
@@ -65,6 +68,9 @@ app.use("/adminChangePassword", adminChangePasswordRouter);
 app.use("/email", emailRouter);
 app.use("/getImage", getImageUploadUrlRouter);
 app.use("/deleteImage", deleteImageRouter);
+
+app.use("/auth/projectAdminResetPassword", authFromToken, verifyAdminRoles(['admin']), projectAdminResetPasswordRouter);
+app.use("/auth/userResetPassword", authFromToken, verifyAdminRoles(['admin']), userResetPasswordRouter);
 
 app.use("/project/addAssignedProject", authFromToken, verifyAdminRoles(['admin']), addAssignedProjectRouter);
 app.use("/project/assignedInventoryToProject", authFromToken, verifyAdminRoles(['projectadmin']), assignedInventoryToProjectRouter);

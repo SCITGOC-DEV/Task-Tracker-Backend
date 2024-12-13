@@ -32,8 +32,19 @@ const userLoginHandler = async (username, password) => {
     const userId = result.rows[0].id;
     const userName = result.rows[0].username;
 
+    const passwordStatus = await bcrypt.compare(password, rightPassword);
+
+    if (passwordStatus == false && isResetPassword != null) {
+      throw new Error("Your password has been reset! Please contact the site administrator.");
+    } else if (passwordStatus == false) {
+      throw new Error("Wrong Password!");
+    }
+
+    await poolQuery(
+      `update users set is_reset_password = NULL where username = '${userName}'`
+    );
+
     const token = jwtCreator(userId, userName, "user");
-    await checkPassword(password, rightPassword);
     return token;
   } catch (e) {
     throw new Error(e.message);
