@@ -31,6 +31,7 @@ const userLoginHandler = async (username, password) => {
     const rightPassword = result.rows[0].password;
     const userId = result.rows[0].id;
     const userName = result.rows[0].username;
+    const isResetPassword = result.rows[0].is_reset_password;
 
     const passwordStatus = await bcrypt.compare(password, rightPassword);
 
@@ -40,9 +41,11 @@ const userLoginHandler = async (username, password) => {
       throw new Error("Wrong Password!");
     }
 
-    await poolQuery(
-      `update users set is_reset_password = NULL where username = '${userName}'`
-    );
+    if (isResetPassword != null) {
+      await poolQuery(
+        `update users set is_reset_password = NULL where username = '${userName}'`
+      );
+    }
 
     const token = jwtCreator(userId, userName, "user");
     return token;

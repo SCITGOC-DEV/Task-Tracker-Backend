@@ -1,4 +1,4 @@
-const poolQuery = require("../misc/poolQuery.js");
+const poolQuery = require("../../misc/poolQuery");
 const express = require("express");
 const bcrypt = require("bcrypt");
 
@@ -9,9 +9,9 @@ userResetPasswordRouter.post("/", async (req, res) => {
   try {
     const { user_name, new_password } = req.body.input;
     await userResetPassword(user_name, new_password);
-    res.json({ error: 0, message: "User Reset Password Successful!" });
+    res.json({ success: true, message: "User Reset Password Successful!" });
   } catch (error) {
-    res.json({ error: 1, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 });
 

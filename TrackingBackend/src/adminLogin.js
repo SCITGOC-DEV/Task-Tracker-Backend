@@ -41,9 +41,12 @@ const adminLogInHandler = async (admin_name, password) => {
     }
 
     const userName = result.rows[0].username;
-    await poolQuery(
-      `update admin set is_reset_password = NULL where username = '${userName}'`
-    );
+    
+    if(isResetPassword != null){
+      await poolQuery(
+        `update admin set is_reset_password = NULL where username = '${userName}'`
+      );
+    }
 
     const token = await jwtCreator(userId, userName, result.rows[0].role);
 
