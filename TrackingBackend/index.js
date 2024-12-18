@@ -36,6 +36,8 @@ const updateTaskRouter = require("./src/tasks/update_task");
 const acceptAssignedTaskRouter = require("./src/tasks/accept_assigned_task");
 const completeTaskRouter = require("./src/tasks/complete_task");
 
+const userUpdateAssignedTaskRouter = require("./src/users/update_assigned_task");
+
 const createTransactionRouter = require("./src/triggers/trigger_create_transactions");
 
 const createInventoryRouter = require("./src/inventories/create_inventory");
@@ -88,7 +90,7 @@ app.use("/task/changeUserForAssignedTask", authFromToken, verifyAdminRoles(['pro
 app.use("/task/createAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), createAssignedTaskRouter);
 app.use("/task/createTask", authFromToken, verifyAdminRoles(['projectadmin']), createTaskRouter);
 app.use("/task/removeAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), removeAssignedTaskRouter);
-app.use("/task/updateAssignedTask", authFromToken, verifyAdminRoles(['projectadmin', 'user']), updateAssignedTaskRouter);
+app.use("/task/updateAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), updateAssignedTaskRouter);
 app.use("/task/updateTask", authFromToken, verifyAdminRoles(['projectadmin']), updateTaskRouter);
 app.use("/task/acceptAssignedTask", authFromToken, verifyAdminRoles(['user']), acceptAssignedTaskRouter);
 app.use("/task/completeTask", authFromToken, verifyAdminRoles(['user']), completeTaskRouter);
@@ -106,6 +108,8 @@ app.use("/inventory/acceptReturnedInventoryToProject", authFromToken, verifyAdmi
 app.use("/inventory/acceptReturnedInventoryToTask", authFromToken, verifyAdminRoles('admin', ['projectadmin']), accceptReturnedInventoryTaskRouter);
 app.use("/inventory/addQtyInventory", authFromToken, verifyAdminRoles(['admin']), addQtyInventoryRouter);
 //app.use("/inventory/updateQtyInventory", authFromToken, verifyAdminRoles(['admin']), updateQtyInventoryRouter);
+
+app.use("/user/updateAssignedTask", authFromToken, verifyAdminRoles(['user']), userUpdateAssignedTaskRouter);
 
 app.listen(3000, () => {
   console.log("Server is listening at port 3000");
