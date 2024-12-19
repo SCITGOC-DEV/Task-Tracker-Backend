@@ -23,24 +23,26 @@ const createInventoryTransaction = async (inventory_id, qty, transaction_type, r
 
 const updateInventoryQty = async (inventory_id, qty, transaction_type) => {
 
+    let query = "";
     if (transaction_type == InventoryTransactionTypeEnum.ADD) {
-        const query = `
+        query = `
         UPDATE inventories
         SET quantity = quantity + $1
         WHERE id = $2        
         RETURNING id, updated_at;
     `;
     } else {
-        const query = `
+        query = `
         UPDATE inventories
         SET quantity = quantity - $1,
-            unit_on_request = unit_on_request - $2
-        WHERE id = $3
+            units_on_request = units_on_request - $2,
+            completed_qty = completed_qty + $3
+        WHERE id = $4
         RETURNING id, updated_at;
     `;
     }
 
-    const values = [qty, qty, inventory_id];
+    const values = [qty, qty, qty, inventory_id];
 
     const result = await poolQuery(query, values);
     return result.rows[0]; // Return the newly created record's ID and created_at timestamp

@@ -12,7 +12,7 @@ createReturnedInventoryTaskRouter.post("/", async (req, res) => {
     } = req.body.input;
 
     // Required fields check
-    const requiredFields = [task_inventory_id, return_qty, approve_qty];
+    const requiredFields = [return_inventory_task_id, is_approved, approve_qty];
     for (let field of requiredFields) {
         if (typeof field === "undefined") {
             res.json({ success: false, message: "All required fields must be provided." });
@@ -37,8 +37,8 @@ const acceptReturnInventoryTask = async (returnInventoryTaskData) => {
         return_inventory_task_id, is_approved, approve_qty, description, receive_admin_name
     } = returnInventoryTaskData;
 
-    const return_inventory_tasks = await poolQuery(
-        `select * from return_inventory_tasks where id = '${task_inventory_id}'`
+    let return_inventory_tasks = await poolQuery(
+        `select * from return_inventory_tasks where id = '${return_inventory_task_id}'`
     );
 
     if (return_inventory_tasks.rowCount == 0) {
@@ -72,28 +72,34 @@ const acceptReturnInventoryTask = async (returnInventoryTaskData) => {
         approve_qty, description, receive_admin_name, is_approved, return_inventory_task_id
     ];
 
+    const result = await poolQuery(query, values);
+
     if (is_approved) {
+        return_inventory_tasks = await poolQuery(
+            `select * from return_inventory_tasks where id = '${return_inventory_task_id}'`
+        );
+
         const total_returned_qty = return_inventory_tasks.rows.reduce((total, inventory) => total + inventory.approve_qty, 0)
 
         let actual_return_date = null;
 
-        if (total_qty == (total_returned_qty + approve_qty)) {
+        if (total_qty == total_returned_qty) {
             actual_return_date = new Date();
         }
 
         // SQL query to insert a return inventory task entry
         const updateInventory_tasks_query = `
-        UPDATE inventory_tasks
+        UPDATE task_inventories
         SET 
             total_returned_qty = $1,
-            used_qty = used_qty - $2,
+            used_qty = total_qty - $2,
             actual_return_date = $3
         WHERE id = $4
         RETURNING id, created_at;
     `;
 
         const updateInventory_tasks_values = [
-            total_returned_qty, approve_qty, actual_return_date, return_inventory_tasks.rows[0].task_inventory_id
+            total_returned_qty, total_returned_qty, actual_return_date, return_inventory_tasks.rows[0].task_inventory_id
         ];
 
         await poolQuery(updateInventory_tasks_query, updateInventory_tasks_values);

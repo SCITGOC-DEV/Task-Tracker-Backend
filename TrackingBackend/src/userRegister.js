@@ -24,7 +24,7 @@ userRegisterRouter.post("/", async (req, res) => {
       accessToken: token,
     });
   } catch (error) {
-    res.json({ error: 1, message: e.message, accessToken: "" });
+    res.json({ error: 1, message: error.message, accessToken: "" });
   }
 });
 

@@ -82,8 +82,8 @@ app.use("/project/changeProjectStatus", authFromToken, verifyAdminRoles(['admin'
 app.use("/project/createProject", authFromToken, verifyAdminRoles(['admin']), createProjectRouter);
 app.use("/project/getProjectByUser", authFromToken, getProjectByUserRouter);
 app.use("/project/getProjectDetails", authFromToken, getProjectDetailsRouter);
-app.use("/project/updateAssignedProject", authFromToken, verifyAdminRoles(['admin, projectadmin']), updateAssignedProjectRouter);
-app.use("/project/updateProject", authFromToken, verifyAdminRoles(['admin, projectadmin']), updateProjectRouter);
+app.use("/project/updateAssignedProject", authFromToken, verifyAdminRoles(['admin', 'projectadmin']), updateAssignedProjectRouter);
+app.use("/project/updateProject", authFromToken, verifyAdminRoles(['admin', 'projectadmin']), updateProjectRouter);
 
 app.use("/task/assignedInventoryToTask", authFromToken, verifyAdminRoles(['projectadmin']), assignedInventoryToTaskRouter);
 app.use("/task/changeUserForAssignedTask", authFromToken, verifyAdminRoles(['projectadmin']), changeUserForAssignedTaskRouter);
@@ -105,7 +105,7 @@ app.use("/inventory/updateReturnInventoryProject", authFromToken, verifyAdminRol
 app.use("/inventory/updateReturnInventoryTask", authFromToken, verifyAdminRoles(['user']), updateReturnInventoryTaskRouter);
 app.use("/inventory/acceptAssignedInventoryToProject", authFromToken, verifyAdminRoles(['admin']), acceptAssignedInventoryToProjectRouter);
 app.use("/inventory/acceptReturnedInventoryToProject", authFromToken, verifyAdminRoles(['admin']), acceptReturnedInventoryToProjectRouter);
-app.use("/inventory/acceptReturnedInventoryToTask", authFromToken, verifyAdminRoles('admin', ['projectadmin']), accceptReturnedInventoryTaskRouter);
+app.use("/inventory/acceptReturnedInventoryToTask", authFromToken, verifyAdminRoles(['admin', 'projectadmin']), accceptReturnedInventoryTaskRouter);
 app.use("/inventory/addQtyInventory", authFromToken, verifyAdminRoles(['admin']), addQtyInventoryRouter);
 //app.use("/inventory/updateQtyInventory", authFromToken, verifyAdminRoles(['admin']), updateQtyInventoryRouter);
 

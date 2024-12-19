@@ -73,7 +73,7 @@ const updateAssignedTask = async (
             actual_end_date_time = $2,
             percentage = $3,
             status = $4,
-            remark = $5
+            remark = $5,
             updated_at = NOW()
         WHERE id = $6
         RETURNING id, updated_at;
@@ -91,7 +91,7 @@ const updateAssignedTask = async (
     const result = await poolQuery(query, values);
 
     if (result.rowCount > 0) {
-        await updateAssignedTaskPercentage(task_id, status);
+        await updateAssignedTaskPercentage(assignedTask.rows[0].task_id, status);
     }
 
     return result.rows; // Return the updated task details

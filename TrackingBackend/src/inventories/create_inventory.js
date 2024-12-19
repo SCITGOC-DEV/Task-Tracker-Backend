@@ -102,8 +102,8 @@ const createInventory = async (inventoryData) => {
     INSERT INTO inventories(supplier, country, address, contact_number, email_address, website, unit_price, quantity, total_amount,
                           date_purchase_received, date_release, total_unit_release, delivered_to_client, delivery_receipt_no,
                           unit_return, location_stock, date_return, stock_office, total_stock_amount, serial_number_start,
-                          serial_number_end, is_return, type, inventory_category_id, part_number, scit_control_number, admin_name)
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)
+                          serial_number_end, is_return, type, inventory_category_id, part_number, scit_control_number, admin_name, total_qty)
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
     RETURNING id, scit_control_number, created_at;
 `;
 
@@ -111,7 +111,7 @@ const createInventory = async (inventoryData) => {
         supplier, country, address, contact_number, email_address, website, unit_price, quantity, total_amount,
         date_purchase_received, date_release, total_unit_release, delivered_to_client, delivery_receipt_no,
         unit_return, location_stock, date_return, stock_office, total_stock_amount, serial_number_start,
-        serial_number_end, is_return, type, inventory_category_id, part_number, scitControlNumber, created_by
+        serial_number_end, is_return, type, inventory_category_id, part_number, scitControlNumber, created_by, quantity
     ];
 
     const result = await poolQuery(query, values);
